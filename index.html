@@ -46,7 +46,8 @@
       { id: "f1", date: "2026-03-31", type: "travel", title: "Fly SFO \u2192 London", detail: "Virgin Atlantic VS20 \u00B7 Depart 5:55 PM \u00B7 Arrive Apr 1 12:15 PM", location: "SFO", icon: "\u2708\uFE0F" },
       { id: "f2", date: "2026-04-21", type: "travel", title: "Fly CDG \u2192 LHR \u2192 SFO", detail: "BA301 10:35 AM \u2192 BA287 2:30 PM \u00B7 Arrive SFO 5:40 PM", location: "Paris CDG", icon: "\u2708\uFE0F" },
       { id: "c1", date: "2026-04-01", type: "transport", title: "Pick up UK rental car", detail: "Alamo \u00B7 Ford Focus \u00B7 Heathrow \u00B7 Conf: 1796629618", location: "London", icon: "\uD83D\uDE97" },
-      { id: "c2", date: "2026-04-07", type: "transport", title: "Return UK rental car", detail: "Heathrow by 12:00 PM", location: "Oxfordshire", icon: "\uD83D\uDE97" },
+      { id: "x0", date: "2026-04-07", type: "transport", title: "Leave Witney for Heathrow", detail: "Depart by 10:30 AM \u00B7 ~1.5 hrs via M40/M25 \u00B7 Check traffic that morning", location: "Oxfordshire", icon: "\uD83D\uDE97" },
+      { id: "c2", date: "2026-04-07", type: "transport", title: "Return UK rental car", detail: "Heathrow \u00B7 Aim to arrive by 12:00 PM", location: "Oxfordshire", icon: "\uD83D\uDE97" },
       { id: "c3", date: "2026-04-09", type: "transport", title: "Pick up France rental car", detail: "Alamo \u00B7 Peugeot 3008 \u00B7 Paris Ternes 11:30 AM \u00B7 Conf: 1593836419", location: "Maisons-Laffitte", icon: "\uD83D\uDE97" },
       { id: "c4", date: "2026-04-20", type: "transport", title: "Return France rental car", detail: "St. Malo Gare by 12:00 PM", location: "Saint-Briac", icon: "\uD83D\uDE97" },
       { id: "t1", date: "2026-04-07", type: "travel", title: "Eurostar London \u2192 Paris", detail: "Train 9036 \u00B7 St Pancras 3:31 PM \u2192 Gare du Nord 6:59 PM \u00B7 Ref: RG72Z6", location: "Oxfordshire", icon: "\uD83D\uDE84" },
@@ -55,6 +56,13 @@
       { id: "w2", date: "2026-04-05", type: "event", title: "Wedding: Lucy & James", detail: "Caswell House, Brize Norton \u00B7 Arrive 1:15 PM \u00B7 Ceremony 2:00 PM \u00B7 Formal attire", location: "Oxfordshire", icon: "\uD83D\uDC92" },
       { id: "d1", date: "2026-04-06", type: "event", title: "Lunch at The Farmer's Dog", detail: "12:45 PM \u00B7 4 guests \u00B7 Burford OX18 4HJ \u00B7 Res: 3RJ8Z3SLR6J", location: "Oxfordshire", icon: "\uD83C\uDF7D\uFE0F" },
       { id: "h1", date: "2026-04-20", type: "stay", title: "Sheraton Paris CDG", detail: "Terminal 2C \u00B7 Check out Apr 21 8:35 AM", location: "Paris CDG", icon: "\uD83C\uDFE8" },
+      // Transfer legs
+      { id: "x1", date: "2026-04-04", type: "transport", title: "Drive London \u2192 Oxfordshire", detail: "Maida Vale to Witney \u00B7 ~1.5 hrs via M40 \u00B7 Check out by 11:00 AM", location: "London", icon: "\uD83D\uDE97" },
+      { id: "x2", date: "2026-04-07", type: "transport", title: "Heathrow \u2192 St Pancras", detail: "~1:00 PM depart Heathrow \u00B7 Heathrow Express to Paddington (~15 min) + Tube/taxi to St Pancras (~30 min) \u00B7 Arrive by 2:30 PM for 3:31 PM Eurostar", location: "London", icon: "\uD83D\uDE87" },
+      { id: "x3", date: "2026-04-07", type: "transport", title: "RER Gare du Nord \u2192 Maisons-Laffitte", detail: "RER A from Ch\u00E2telet\u2013Les Halles \u00B7 ~30 min \u00B7 Transfer at Ch\u00E2telet from RER B/D", location: "Maisons-Laffitte", icon: "\uD83D\uDE87" },
+      { id: "x4", date: "2026-04-09", type: "transport", title: "Drive Paris Ternes \u2192 Loire Valley", detail: "After car pickup 11:30 AM \u00B7 ~2.5 hrs via A10 to Les Garennes sur Loire", location: "Loire Valley", icon: "\uD83D\uDE97" },
+      { id: "x5", date: "2026-04-13", type: "transport", title: "Drive Loire Valley \u2192 Saint-Briac", detail: "Les Garennes sur Loire to Saint-Briac-sur-Mer \u00B7 ~3.5 hrs via A11/A84", location: "Saint-Briac", icon: "\uD83D\uDE97" },
+      { id: "x6", date: "2026-04-20", type: "transport", title: "RER to CDG / Sheraton", detail: "Train arrives Paris Montparnasse \u00B7 M\u00E9tro to Ch\u00E2telet + RER B to CDG \u00B7 ~1 hr", location: "Paris CDG", icon: "\uD83D\uDE87" },
     ];
 
     const STAYS = [

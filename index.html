@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Europe 2026 Trip Planner</title>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #f9fafb; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script>
+    // Firebase config
+    firebase.initializeApp({
+      apiKey: "AIzaSyDEuLdLszJEl07Qv9UQroRTrt7lDwIFgfs",
+      authDomain: "eurotrip-2026-d1f87.firebaseapp.com",
+      databaseURL: "https://eurotrip-2026-d1f87-default-rtdb.firebaseio.com",
+      projectId: "eurotrip-2026-d1f87",
+      storageBucket: "eurotrip-2026-d1f87.firebasestorage.app",
+      messagingSenderId: "975368020503",
+      appId: "1:975368020503:web:dc8d23cf24f4e8ecee3252"
+    });
+    var db = firebase.database();
+  </script>
+  <script type="text/babel">
+    const { useState, useEffect, useMemo, useCallback } = React;
+
+    const LOCATIONS = {
+      SFO: { emoji: "\u2708\uFE0F", color: "#6366f1" },
+      London: { emoji: "\uD83C\uDDEC\uD83C\uDDE7", color: "#ef4444" },
+      Oxfordshire: { emoji: "\uD83C\uDFF0", color: "#f59e0b" },
+      "Maisons-Laffitte": { emoji: "\uD83C\uDDEB\uD83C\uDDF7", color: "#3b82f6" },
+      "Loire Valley": { emoji: "\uD83C\uDF77", color: "#8b5cf6" },
+      "Saint-Briac": { emoji: "\u26F5", color: "#06b6d4" },
+      "Paris CDG": { emoji: "\uD83D\uDEEB", color: "#ec4899" },
+    };
+
+    const SEED_EVENTS = [
+      { id: "f1", date: "2026-03-31", type: "travel", title: "Fly SFO \u2192 London", detail: "Virgin Atlantic VS20 \u00B7 Depart 5:55 PM \u00B7 Arrive Apr 1 12:15 PM", location: "SFO", icon: "\u2708\uFE0F" },
+      { id: "f2", date: "2026-04-21", type: "travel", title: "Fly CDG \u2192 LHR \u2192 SFO", detail: "BA301 10:35 AM \u2192 BA287 2:30 PM \u00B7 Arrive SFO 5:40 PM", location: "Paris CDG", icon: "\u2708\uFE0F" },
+      { id: "c1", date: "2026-04-01", type: "transport", title: "Pick up UK rental car", detail: "Alamo \u00B7 Ford Focus \u00B7 Heathrow \u00B7 Conf: 1796629618", location: "London", icon: "\uD83D\uDE97" },
+      { id: "c2", date: "2026-04-07", type: "transport", title: "Return UK rental car", detail: "Heathrow by 12:00 PM", location: "Oxfordshire", icon: "\uD83D\uDE97" },
+      { id: "c3", date: "2026-04-09", type: "transport", title: "Pick up France rental car", detail: "Alamo \u00B7 Peugeot 3008 \u00B7 Paris Ternes 11:30 AM \u00B7 Conf: 1593836419", location: "Maisons-Laffitte", icon: "\uD83D\uDE97" },
+      { id: "c4", date: "2026-04-20", type: "transport", title: "Return France rental car", detail: "St. Malo Gare by 12:00 PM", location: "Saint-Briac", icon: "\uD83D\uDE97" },
+      { id: "t1", date: "2026-04-07", type: "travel", title: "Eurostar London \u2192 Paris", detail: "Train 9036 \u00B7 St Pancras 3:31 PM \u2192 Gare du Nord 6:59 PM \u00B7 Ref: RG72Z6", location: "Oxfordshire", icon: "\uD83D\uDE84" },
+      { id: "t2", date: "2026-04-20", type: "travel", title: "Train St. Malo \u2192 Paris", detail: "Afternoon train (check PDF for times)", location: "Saint-Briac", icon: "\uD83D\uDE84" },
+      { id: "w1", date: "2026-04-04", type: "event", title: "Pre-wedding drinks", detail: "The Blue Boar, Market Square, Witney \u00B7 6:30\u201311:00 PM", location: "Oxfordshire", icon: "\uD83E\uDD42" },
+      { id: "w2", date: "2026-04-05", type: "event", title: "Wedding: Lucy & James", detail: "Caswell House, Brize Norton \u00B7 Arrive 1:15 PM \u00B7 Ceremony 2:00 PM \u00B7 Formal attire", location: "Oxfordshire", icon: "\uD83D\uDC92" },
+      { id: "d1", date: "2026-04-06", type: "event", title: "Lunch at The Farmer's Dog", detail: "12:45 PM \u00B7 4 guests \u00B7 Burford OX18 4HJ \u00B7 Res: 3RJ8Z3SLR6J", location: "Oxfordshire", icon: "\uD83C\uDF7D\uFE0F" },
+      { id: "h1", date: "2026-04-20", type: "stay", title: "Sheraton Paris CDG", detail: "Terminal 2C \u00B7 Check out Apr 21 8:35 AM", location: "Paris CDG", icon: "\uD83C\uDFE8" },
+    ];
+
+    const STAYS = [
+      { id: "s1", start: "2026-04-01", end: "2026-04-04", location: "London", title: "Maida Vale House", detail: "12B Greville Place, NW6 \u00B7 Host: Zoe \u00B7 Lockbox \u00B7 Conf: HMBQQ9ZYSA", checkIn: "4:00 PM", checkOut: "11:00 AM" },
+      { id: "s2", start: "2026-04-04", end: "2026-04-07", location: "Oxfordshire", title: "Witney Hideaway", detail: "25 The Crofts, OX28 \u00B7 Host: Amy \u00B7 Lockbox \u00B7 Conf: HMJXCM5PKW", checkIn: "3:00 PM", checkOut: "11:00 AM" },
+      { id: "s3", start: "2026-04-07", end: "2026-04-09", location: "Maisons-Laffitte", title: "Garden House near Paris", detail: "33 Rue des Canus \u00B7 Host: Beatrice \u00B7 Conf: HM8QJYFF3F", checkIn: "3:00 PM", checkOut: "11:00 AM" },
+      { id: "s4", start: "2026-04-09", end: "2026-04-13", location: "Loire Valley", title: "Cottage \"Le Pressoir\"", detail: "3 Clabeau, Les Garennes sur Loire \u00B7 Host: Jordane \u00B7 Pool! \u00B7 Conf: HMRKBJKCWR", checkIn: "4:00 PM", checkOut: "10:00 AM" },
+      { id: "s5", start: "2026-04-13", end: "2026-04-20", location: "Saint-Briac", title: "Aunt's Vacation Home", detail: "4 Rue de la Salinette, Saint-Briac-sur-Mer", checkIn: "", checkOut: "" },
+      { id: "s6", start: "2026-04-20", end: "2026-04-21", location: "Paris CDG", title: "Sheraton CDG Airport", detail: "Terminal 2C, Tremblay-en-France", checkIn: "", checkOut: "8:35 AM" },
+    ];
+
+    function getDays(startStr, endStr) {
+      const days = [];
+      let d = new Date(startStr + "T00:00:00");
+      const end = new Date(endStr + "T00:00:00");
+      while (d <= end) {
+        days.push(d.toISOString().slice(0, 10));
+        d = new Date(d.getTime() + 86400000);
+      }
+      return days;
+    }
+
+    const ALL_DAYS = getDays("2026-03-31", "2026-04-21");
+    const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+    function formatDate(str) {
+      const d = new Date(str + "T12:00:00");
+      return WEEKDAYS[d.getDay()] + ", " + MONTHS[d.getMonth()] + " " + d.getDate();
+    }
+
+    function getStayForDate(date) {
+      return STAYS.find(s => date >= s.start && date < s.end);
+    }
+
+    const TYPE_BADGES = {
+      travel: { bg: "#dbeafe", text: "#1e40af", label: "Travel" },
+      transport: { bg: "#fef3c7", text: "#92400e", label: "Transport" },
+      event: { bg: "#fce7f3", text: "#9d174d", label: "Event" },
+      stay: { bg: "#d1fae5", text: "#065f46", label: "Stay" },
+      custom: { bg: "#e0e7ff", text: "#3730a3", label: "Plan" },
+    };
+
+    function Badge({ type }) {
+      const b = TYPE_BADGES[type] || TYPE_BADGES.custom;
+      return <span style={{ background: b.bg, color: b.text, padding: "2px 8px", borderRadius: 9999, fontSize: 11, fontWeight: 600, letterSpacing: 0.3 }}>{b.label}</span>;
+    }
+
+    function EventCard({ event, onDelete }) {
+      return (
+        <div style={{ display: "flex", gap: 10, alignItems: "flex-start", padding: "10px 14px", background: "#fff", borderRadius: 10, border: "1px solid #e5e7eb", marginBottom: 6 }}>
+          <span style={{ fontSize: 22, lineHeight: 1.2, flexShrink: 0, marginTop: 2 }}>{event.icon || "\uD83D\uDCCC"}</span>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+              <span style={{ fontWeight: 600, fontSize: 14, color: "#111827" }}>{event.title}</span>
+              <Badge type={event.type} />
+            </div>
+            {event.detail && <div style={{ fontSize: 13, color: "#6b7280", marginTop: 3, lineHeight: 1.4 }}>{event.detail}</div>}
+          </div>
+          {event.type === "custom" && (
+            <button onClick={() => onDelete(event.id)} style={{ background: "none", border: "none", cursor: "pointer", color: "#9ca3af", fontSize: 16, padding: "2px 4px", flexShrink: 0 }} title="Remove">&times;</button>
+          )}
+        </div>
+      );
+    }
+
+    function AddEventForm({ date, onAdd, onCancel }) {
+      const [title, setTitle] = useState("");
+      const [detail, setDetail] = useState("");
+      const [icon, setIcon] = useState("\uD83D\uDCCC");
+      const icons = ["\uD83D\uDCCC", "\uD83C\uDF7D\uFE0F", "\uD83C\uDFDB\uFE0F", "\uD83D\uDEB6", "\uD83C\uDFAD", "\uD83D\uDECD\uFE0F", "\u26EA", "\uD83C\uDF77", "\uD83C\uDFD6\uFE0F", "\uD83D\uDCF8", "\uD83C\uDFB5", "\u26F5"];
+
+      return (
+        <div style={{ padding: 14, background: "#f0f4ff", borderRadius: 10, border: "1px solid #c7d2fe", marginBottom: 6 }}>
+          <div style={{ fontSize: 13, fontWeight: 600, color: "#4338ca", marginBottom: 10 }}>Add plan for {formatDate(date)}</div>
+          <div style={{ display: "flex", gap: 6, marginBottom: 8, flexWrap: "wrap" }}>
+            {icons.map(e => (
+              <button key={e} onClick={() => setIcon(e)} style={{ fontSize: 18, padding: "4px 6px", borderRadius: 6, border: icon === e ? "2px solid #4338ca" : "2px solid transparent", background: icon === e ? "#e0e7ff" : "#fff", cursor: "pointer" }}>{e}</button>
+            ))}
+          </div>
+          <input value={title} onChange={e => setTitle(e.target.value)} placeholder="What's the plan?" style={{ width: "100%", padding: "8px 10px", borderRadius: 8, border: "1px solid #d1d5db", fontSize: 14, marginBottom: 6, boxSizing: "border-box" }} />
+          <input value={detail} onChange={e => setDetail(e.target.value)} placeholder="Details (time, address, notes...)" style={{ width: "100%", padding: "8px 10px", borderRadius: 8, border: "1px solid #d1d5db", fontSize: 13, marginBottom: 10, boxSizing: "border-box" }} />
+          <div style={{ display: "flex", gap: 8 }}>
+            <button onClick={() => { if (title.trim()) { onAdd({ date, type: "custom", title: title.trim(), detail: detail.trim(), icon }); } }} disabled={!title.trim()} style={{ padding: "6px 16px", borderRadius: 8, border: "none", background: title.trim() ? "#4338ca" : "#c7d2fe", color: "#fff", fontWeight: 600, fontSize: 13, cursor: title.trim() ? "pointer" : "default" }}>Add</button>
+            <button onClick={onCancel} style={{ padding: "6px 16px", borderRadius: 8, border: "1px solid #d1d5db", background: "#fff", color: "#374151", fontSize: 13, cursor: "pointer" }}>Cancel</button>
+          </div>
+        </div>
+      );
+    }
+
+    function DayCard({ date, events, stay, onAddEvent, onDeleteEvent, isToday }) {
+      const [adding, setAdding] = useState(false);
+      const d = new Date(date + "T12:00:00");
+      const dayNum = d.getDate();
+      const weekday = WEEKDAYS[d.getDay()];
+      const isCheckIn = STAYS.find(s => s.start === date);
+      const isCheckOut = STAYS.find(s => s.end === date);
+      const locationColor = stay ? (LOCATIONS[stay.location]?.color || "#6b7280") : "#e5e7eb";
+
+      return (
+        <div style={{ position: "relative", paddingLeft: 28 }}>
+          <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: 28, display: "flex", flexDirection: "column", alignItems: "center" }}>
+            <div style={{ width: 14, height: 14, borderRadius: "50%", background: isToday ? "#4338ca" : locationColor, border: isToday ? "3px solid #a5b4fc" : "3px solid #fff", boxShadow: "0 0 0 1px " + (isToday ? "#a5b4fc" : "#d1d5db"), flexShrink: 0, marginTop: 4, zIndex: 1 }} />
+            <div style={{ flex: 1, width: 2, background: "#e5e7eb" }} />
+          </div>
+          <div style={{ paddingBottom: 12 }}>
+            <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 8, paddingLeft: 8 }}>
+              <span style={{ fontSize: 22, fontWeight: 700, color: isToday ? "#4338ca" : "#111827", lineHeight: 1 }}>{dayNum}</span>
+              <span style={{ fontSize: 14, fontWeight: 500, color: isToday ? "#6366f1" : "#6b7280" }}>{weekday}</span>
+              {isToday && <span style={{ fontSize: 11, fontWeight: 700, color: "#4338ca", background: "#e0e7ff", padding: "1px 8px", borderRadius: 9999 }}>TODAY</span>}
+              {stay && (
+                <span style={{ fontSize: 12, fontWeight: 600, color: locationColor, display: "flex", alignItems: "center", gap: 4 }}>
+                  {LOCATIONS[stay.location]?.emoji} {stay.location}
+                </span>
+              )}
+            </div>
+            <div style={{ paddingLeft: 8 }}>
+              {isCheckIn && (
+                <div style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "6px 12px", background: "#ecfdf5", borderRadius: 8, border: "1px solid #a7f3d0", marginBottom: 6, marginRight: 6 }}>
+                  <span style={{ fontSize: 13 }}>{"\uD83D\uDD11"}</span>
+                  <div>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: "#065f46" }}>Check in: {isCheckIn.title}</div>
+                    {isCheckIn.checkIn && <div style={{ fontSize: 12, color: "#059669" }}>After {isCheckIn.checkIn}</div>}
+                    <div style={{ fontSize: 12, color: "#6b7280" }}>{isCheckIn.detail}</div>
+                  </div>
+                </div>
+              )}
+              {isCheckOut && (
+                <div style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "6px 12px", background: "#fef2f2", borderRadius: 8, border: "1px solid #fecaca", marginBottom: 6 }}>
+                  <span style={{ fontSize: 13 }}>{"\uD83D\uDEAA"}</span>
+                  <div>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: "#991b1b" }}>Check out: {isCheckOut.title}</div>
+                    {isCheckOut.checkOut && <div style={{ fontSize: 12, color: "#dc2626" }}>Before {isCheckOut.checkOut}</div>}
+                  </div>
+                </div>
+              )}
+            </div>
+            <div style={{ paddingLeft: 8 }}>
+              {events.map(ev => <EventCard key={ev.id} event={ev} onDelete={onDeleteEvent} />)}
+              {adding ? (
+                <AddEventForm date={date} onAdd={(ev) => { onAddEvent(ev); setAdding(false); }} onCancel={() => setAdding(false)} />
+              ) : (
+                <button onClick={() => setAdding(true)} style={{ display: "flex", alignItems: "center", gap: 4, padding: "5px 12px", borderRadius: 8, border: "1px dashed #d1d5db", background: "transparent", color: "#9ca3af", fontSize: 13, cursor: "pointer", marginTop: 2 }}>
+                  <span style={{ fontSize: 15 }}>+</span> Add plan
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    function StayOverview() {
+      return (
+        <div style={{ display: "flex", gap: 6, overflowX: "auto", paddingBottom: 8 }}>
+          {STAYS.map(s => {
+            const loc = LOCATIONS[s.location] || {};
+            const nights = Math.round((new Date(s.end + "T00:00:00") - new Date(s.start + "T00:00:00")) / 86400000);
+            return (
+              <div key={s.id} style={{ minWidth: 150, padding: "10px 14px", borderRadius: 12, background: "#fff", border: "2px solid " + (loc.color || "#d1d5db"), flexShrink: 0 }}>
+                <div style={{ fontSize: 20, marginBottom: 4 }}>{loc.emoji}</div>
+                <div style={{ fontSize: 14, fontWeight: 700, color: "#111827" }}>{s.location}</div>
+                <div style={{ fontSize: 12, color: "#6b7280" }}>{s.title}</div>
+                <div style={{ fontSize: 12, fontWeight: 600, color: loc.color, marginTop: 4 }}>{nights} night{nights > 1 ? "s" : ""}</div>
+                <div style={{ fontSize: 11, color: "#9ca3af" }}>{formatDate(s.start).split(", ")[1]} {"\u2013"} {formatDate(s.end).split(", ")[1]}</div>
+              </div>
+            );
+          })}
+        </div>
+      );
+    }
+
+    // Connection status indicator
+    function SyncStatus({ connected, syncing }) {
+      if (syncing) return <span style={{ fontSize: 12, color: "#f59e0b", display: "flex", alignItems: "center", gap: 4 }}>{"\u26A1"} Syncing...</span>;
+      if (connected) return <span style={{ fontSize: 12, color: "#10b981", display: "flex", alignItems: "center", gap: 4 }}>{"\u2705"} Live synced</span>;
+      return <span style={{ fontSize: 12, color: "#ef4444", display: "flex", alignItems: "center", gap: 4 }}>{"\u274C"} Offline</span>;
+    }
+
+    function TripPlanner() {
+      const [events, setEvents] = useState([]);
+      const [filter, setFilter] = useState("all");
+      const [connected, setConnected] = useState(false);
+      const [syncing, setSyncing] = useState(true);
+      const [loaded, setLoaded] = useState(false);
+
+      const today = new Date().toISOString().slice(0, 10);
+      const eventsRef = db.ref("events");
+
+      // Listen for real-time changes from Firebase
+      useEffect(() => {
+        // Track connection state
+        const connRef = db.ref(".info/connected");
+        connRef.on("value", (snap) => setConnected(!!snap.val()));
+
+        // Listen for all events
+        eventsRef.on("value", (snapshot) => {
+          const data = snapshot.val();
+          if (data) {
+            const arr = Object.entries(data).map(([key, val]) => ({ ...val, id: key }));
+            setEvents(arr);
+          } else {
+            // DB is empty — seed it with initial events
+            SEED_EVENTS.forEach(ev => {
+              eventsRef.child(ev.id).set(ev);
+            });
+          }
+          setSyncing(false);
+          setLoaded(true);
+        });
+
+        return () => {
+          connRef.off();
+          eventsRef.off();
+        };
+      }, []);
+
+      const addEvent = useCallback((ev) => {
+        const newRef = eventsRef.push();
+        newRef.set({ ...ev, id: newRef.key });
+      }, []);
+
+      const deleteEvent = useCallback((id) => {
+        eventsRef.child(id).remove();
+      }, []);
+
+      const eventsByDate = useMemo(() => {
+        const map = {};
+        events.forEach(ev => {
+          if (!map[ev.date]) map[ev.date] = [];
+          map[ev.date].push(ev);
+        });
+        return map;
+      }, [events]);
+
+      const filteredDays = ALL_DAYS.filter(date => {
+        if (filter === "all") return true;
+        const stay = getStayForDate(date);
+        if (!stay) return filter === "travel";
+        return stay.location === filter;
+      });
+
+      if (!loaded) {
+        return (
+          <div style={{ maxWidth: 680, margin: "0 auto", fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", padding: "80px 16px", textAlign: "center" }}>
+            <div style={{ fontSize: 32, marginBottom: 12 }}>{"\u2708\uFE0F"}</div>
+            <div style={{ fontSize: 16, color: "#6b7280" }}>Loading trip planner...</div>
+          </div>
+        );
+      }
+
+      return (
+        <div style={{ maxWidth: 680, margin: "0 auto", fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", padding: "24px 16px", background: "#f9fafb", minHeight: "100vh" }}>
+          <div style={{ textAlign: "center", marginBottom: 24 }}>
+            <h1 style={{ fontSize: 26, fontWeight: 800, color: "#111827", margin: 0 }}>Europe 2026</h1>
+            <p style={{ fontSize: 14, color: "#6b7280", margin: "4px 0 0" }}>Joe, Emily & Chloe &middot; March 31 &ndash; April 21 &middot; 22 days</p>
+            <div style={{ marginTop: 8 }}><SyncStatus connected={connected} syncing={syncing} /></div>
+          </div>
+          <StayOverview />
+          <div style={{ display: "flex", gap: 6, marginTop: 16, marginBottom: 20, overflowX: "auto", paddingBottom: 4 }}>
+            {[{ key: "all", label: "All Days" }].concat(Object.keys(LOCATIONS).map(k => ({ key: k, label: LOCATIONS[k].emoji + " " + k }))).map(f => (
+              <button key={f.key} onClick={() => setFilter(f.key)} style={{ padding: "5px 14px", borderRadius: 9999, border: filter === f.key ? "2px solid #4338ca" : "1px solid #d1d5db", background: filter === f.key ? "#e0e7ff" : "#fff", color: filter === f.key ? "#4338ca" : "#6b7280", fontSize: 13, fontWeight: 600, cursor: "pointer", whiteSpace: "nowrap", flexShrink: 0 }}>
+                {f.label}
+              </button>
+            ))}
+          </div>
+          {filteredDays.length > 0 && filteredDays[0].startsWith("2026-03") && (
+            <div style={{ fontSize: 13, fontWeight: 700, color: "#9ca3af", textTransform: "uppercase", letterSpacing: 1.5, marginBottom: 12, paddingLeft: 36 }}>March 2026</div>
+          )}
+          {filteredDays.map((date, i) => {
+            const stay = getStayForDate(date);
+            const dayEvents = eventsByDate[date] || [];
+            const prevDate = filteredDays[i - 1];
+            const showAprilHeader = date.startsWith("2026-04") && (!prevDate || prevDate.startsWith("2026-03"));
+            return (
+              <div key={date}>
+                {showAprilHeader && (
+                  <div style={{ fontSize: 13, fontWeight: 700, color: "#9ca3af", textTransform: "uppercase", letterSpacing: 1.5, marginBottom: 12, marginTop: 8, paddingLeft: 36 }}>April 2026</div>
+                )}
+                <DayCard date={date} events={dayEvents} stay={stay} onAddEvent={addEvent} onDeleteEvent={deleteEvent} isToday={date === today} />
+              </div>
+            );
+          })}
+          <div style={{ textAlign: "center", padding: "20px 0 8px", borderTop: "1px solid #e5e7eb", marginTop: 12 }}>
+            <div style={{ fontSize: 13, color: "#9ca3af" }}>{"\uD83C\uDDEC\uD83C\uDDE7"} {"\uD83C\uDDEB\uD83C\uDDF7"} Bon voyage!</div>
+          </div>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<TripPlanner />);
+  </script>
+</body>
+</html>

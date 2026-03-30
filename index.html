@@ -159,7 +159,7 @@
     // Stay Modal - shows full stay details with Airbnb link
     function StayModal({ stay, onClose }) {
       const overlayRef = useRef(null);
-      const airbnbUrl = stay.conf ? `https://www.airbnb.com/trips/v1/${stay.conf}/details` : null;
+      const airbnbUrl = stay.conf ? "https://www.airbnb.com/trips/v1/" + stay.conf + "/details" : null;
 
       return (
         <div className="modal-overlay" ref={overlayRef} onClick={(e) => { if (e.target === overlayRef.current) onClose(); }}>

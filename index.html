@@ -12,12 +12,19 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { background: #f9fafb; }
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 16px; }
+    .modal-content { background: #fff; border-radius: 16px; max-width: 520px; width: 100%; max-height: 85vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+    .maps-link { display: inline-flex; align-items: center; gap: 4px; color: #2563eb; text-decoration: none; font-size: 12px; font-weight: 600; padding: 3px 8px; background: #eff6ff; border-radius: 6px; border: 1px solid #bfdbfe; margin-top: 4px; }
+    .maps-link:hover { background: #dbeafe; }
+    .detail-row { display: flex; gap: 6px; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid #f3f4f6; font-size: 13px; }
+    .detail-label { color: #6b7280; min-width: 80px; flex-shrink: 0; font-weight: 500; }
+    .detail-value { color: #111827; word-break: break-word; user-select: text; }
+    .comment-box { width: 100%; min-height: 60px; padding: 8px 10px; border-radius: 8px; border: 1px solid #d1d5db; font-size: 13px; font-family: inherit; resize: vertical; }
   </style>
 </head>
 <body>
   <div id="root"></div>
   <script>
-    // Firebase config
     firebase.initializeApp({
       apiKey: "AIzaSyDEuLdLszJEl07Qv9UQroRTrt7lDwIFgfs",
       authDomain: "eurotrip-2026-d1f87.firebaseapp.com",
@@ -30,7 +37,7 @@
     var db = firebase.database();
   </script>
   <script type="text/babel">
-    const { useState, useEffect, useMemo, useCallback } = React;
+    const { useState, useEffect, useMemo, useCallback, useRef } = React;
 
     const LOCATIONS = {
       SFO: { emoji: "\u2708\uFE0F", color: "#6366f1" },
@@ -42,8 +49,36 @@
       "Paris CDG": { emoji: "\uD83D\uDEEB", color: "#ec4899" },
     };
 
+    // Google Maps link helper
+    function mapsUrl(query) {
+      return "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(query);
+    }
+
+    // Extended event data with addresses, notes, maps queries, and transit info
+    const EVENT_EXTRA = {
+      "f1": { address: "SFO International Terminal", conf: "CNQYAM", mapsQuery: "San Francisco International Airport Terminal", notes: "Virgin Atlantic VS20 \u00B7 Economy class \u00B7 Chase Travel Trip ID: 1012287541\nTravelers: Emily, Joe, Chloe (lap infant under Emily)\nConfirmation: CNQYAM\nDepart: 5:55 PM \u2192 Arrive Apr 1 12:15 PM (+1 day)\nFlight time: 10h 20m\nNon-refundable, no changes permitted" },
+      "f2": { address: "Paris CDG Terminal 2", mapsQuery: "Paris Charles de Gaulle Airport Terminal 2", notes: "BA301 CDG 10:35 AM \u2192 LHR 10:55 AM (1h 20m)\nBA287 LHR 2:30 PM \u2192 SFO 5:40 PM (10h 10m)\nAllow time for terminal transfer at Heathrow" },
+      "c1": { address: "Heathrow Airport, London", conf: "1796629618", mapsQuery: "Alamo Rent A Car Heathrow Airport", notes: "Alamo \u00B7 Ford Focus or similar\nConf: 1796629618\nPick up at Heathrow after arrival" },
+      "x0": { mapsQuery: "Witney Oxfordshire to Heathrow Airport", notes: "Leave Witney by 10:30 AM\n~1.5 hrs via M40/M25\nCheck Google Maps for traffic that morning\nAim to arrive Heathrow by noon" },
+      "c2": { address: "Heathrow Airport, London", mapsQuery: "Alamo Rent A Car Heathrow Airport", notes: "Return car at Heathrow\nAim to arrive by 12:00 PM\nAllow time for car return process + shuttle" },
+      "c3": { address: "24 Avenue de la Grande Arm\u00E9e, 75017 Paris", conf: "1593836419", mapsQuery: "Alamo Rent A Car Paris Ternes, 24 Avenue de la Grande Arm\u00E9e, Paris", notes: "Alamo \u00B7 Peugeot 3008 or similar\nConf: 1593836419\nPickup: 11:30 AM\nAddress: 24 Avenue de la Grande Arm\u00E9e, 75017 Paris (Paris Ternes)" },
+      "c4": { address: "Gare de Saint-Malo", mapsQuery: "Gare de Saint-Malo", notes: "Return car at St. Malo train station area\nBy 12:00 PM\nThen catch afternoon train to Paris" },
+      "t1": { address: "St Pancras International, London", conf: "RG72Z6", mapsQuery: "St Pancras International Station London", notes: "Eurostar Train 9036\nRef: RG72Z6\nDepart St Pancras: 3:31 PM\nArrive Gare du Nord: 6:59 PM (local)\nBe at station by 2:30 PM for check-in\nPassengers: Joe, Emily, Chloe, Chris, Christine, Dominic" },
+      "t2": { address: "Gare de Saint-Malo", mapsQuery: "Gare de Saint-Malo", notes: "TGV/Intercit\u00E9s St. Malo \u2192 Paris Montparnasse\nCheck PDF attachment for exact times\nTravel time: ~2h 45m" },
+      "w1": { address: "The Blue Boar, Market Square, Witney OX28 6BN", mapsQuery: "The Blue Boar Witney Market Square", notes: "Pre-wedding drinks for Lucy & James\nThe Blue Boar, Market Square, Witney\n6:30 PM \u2013 11:00 PM\nCasual attire" },
+      "w2": { address: "Caswell House, Brize Norton, OX18 3NJ", mapsQuery: "Caswell House Brize Norton Oxfordshire", notes: "Wedding of Lucy & James\nCaswell House, Brize Norton OX18 3NJ\nArrive by 1:15 PM\nCeremony: 2:00 PM\nDress code: Formal attire\nTaxi companies: 001 Taxis (01993 700 001), Carterton Cars" },
+      "d1": { address: "The Farmer's Dog, 19 High St, Burford OX18 4HJ", conf: "3RJ8Z3SLR6J", mapsQuery: "The Farmer's Dog Burford Oxfordshire", notes: "Lunch reservation\nTime: 12:45 PM\n4 guests\nConf: 3RJ8Z3SLR6J\nAddress: 19 High St, Burford OX18 4HJ" },
+      "h1": { address: "Sheraton Paris CDG, Terminal 2C, 95716 Tremblay-en-France", mapsQuery: "Sheraton Paris Charles de Gaulle Airport Hotel", notes: "Sheraton Paris CDG Airport\nTerminal 2C, Tremblay-en-France\nCheck out: Apr 21 8:35 AM\nConvenient for early BA301 flight at 10:35 AM" },
+      "x1": { mapsQuery: "12B Greville Place London NW6 to Witney Oxfordshire", notes: "Drive from Maida Vale to Witney\n~1.5 hrs via M40\nCheck out Airbnb by 11:00 AM" },
+      "x2": { address: "Heathrow Airport to St Pancras International", notes: "Heathrow Express: Heathrow Central \u2192 London Paddington (~15 min, trains every 15 min)\nThen: Tube from Paddington \u2192 King's Cross St Pancras (Hammersmith & City or Circle line, ~20 min)\nOr taxi Paddington \u2192 St Pancras (~15 min, \u00A315\u201320)\n\nTotal: ~45\u201360 min\nAllow 1.5 hrs with luggage + baby\nDepart Heathrow ~1:00 PM \u2192 Arrive St Pancras by 2:30 PM" },
+      "x3": { notes: "From Gare du Nord (Eurostar arrival at 6:59 PM):\n\n1. Walk to RER B/D platforms at Gare du Nord\n2. Take RER B or D one stop south to Ch\u00E2telet\u2013Les Halles (~3 min)\n3. Transfer to RER A (direction Saint-Germain-en-Laye or Cergy)\n4. RER A to Maisons-Laffitte station (~18 min)\n\nStations: Gare du Nord \u2192 Ch\u00E2telet\u2013Les Halles \u2192 Auber \u2192 Charles de Gaulle \u00C9toile \u2192 La D\u00E9fense \u2192 Nanterre Pr\u00E9fecture \u2192 Houilles-Carri\u00E8res \u2192 Sartrouville \u2192 Maisons-Laffitte\n\nTotal: ~25\u201330 min\nEvening trains run every 10\u201315 min\nBuy Navigo Easy card or t+ tickets at station" },
+      "x4": { mapsQuery: "24 Avenue de la Grande Arm\u00E9e Paris to Les Garennes sur Loire", notes: "After car pickup at 11:30 AM\nDrive south via A10 autoroute\n~2.5 hrs (250 km)\nTolls: ~\u20AC15\u201320\nStop options: Orl\u00E9ans or Tours for lunch" },
+      "x5": { mapsQuery: "Les Garennes sur Loire to Saint-Briac-sur-Mer", notes: "Drive northwest via A11 then A84\n~3.5 hrs (340 km)\nTolls: ~\u20AC20\u201325\nGood stop: Rennes (about 2/3 of the way)" },
+      "x6": { notes: "From Paris Montparnasse (train arrival):\n\n1. M\u00E9tro Line 4 from Montparnasse-Bienvenu\u00EB \u2192 Ch\u00E2telet (~10 min)\n2. Transfer to RER B (direction A\u00E9roport CDG)\n3. RER B to A\u00E9roport Charles de Gaulle 2 TGV (~35 min)\n4. Walk or shuttle to Sheraton (Terminal 2C)\n\nTotal: ~55\u201365 min\nRER B runs every 10\u201320 min\nLast trains around midnight\nAlternative: Taxi ~\u20AC55\u201370 (45 min depending on traffic)" },
+    };
+
     const SEED_EVENTS = [
-      { id: "f1", date: "2026-03-31", type: "travel", title: "Fly SFO \u2192 London", detail: "Virgin Atlantic VS20 \u00B7 Depart 5:55 PM \u00B7 Arrive Apr 1 12:15 PM", location: "SFO", icon: "\u2708\uFE0F" },
+      { id: "f1", date: "2026-03-31", type: "travel", title: "Fly SFO \u2192 London", detail: "Virgin Atlantic VS20 \u00B7 Depart 5:55 PM \u00B7 Arrive Apr 1 12:15 PM \u00B7 Conf: CNQYAM", location: "SFO", icon: "\u2708\uFE0F" },
       { id: "f2", date: "2026-04-21", type: "travel", title: "Fly CDG \u2192 LHR \u2192 SFO", detail: "BA301 10:35 AM \u2192 BA287 2:30 PM \u00B7 Arrive SFO 5:40 PM", location: "Paris CDG", icon: "\u2708\uFE0F" },
       { id: "c1", date: "2026-04-01", type: "transport", title: "Pick up UK rental car", detail: "Alamo \u00B7 Ford Focus \u00B7 Heathrow \u00B7 Conf: 1796629618", location: "London", icon: "\uD83D\uDE97" },
       { id: "x0", date: "2026-04-07", type: "transport", title: "Leave Witney for Heathrow", detail: "Depart by 10:30 AM \u00B7 ~1.5 hrs via M40/M25 \u00B7 Check traffic that morning", location: "Oxfordshire", icon: "\uD83D\uDE97" },
@@ -56,22 +91,21 @@
       { id: "w2", date: "2026-04-05", type: "event", title: "Wedding: Lucy & James", detail: "Caswell House, Brize Norton \u00B7 Arrive 1:15 PM \u00B7 Ceremony 2:00 PM \u00B7 Formal attire", location: "Oxfordshire", icon: "\uD83D\uDC92" },
       { id: "d1", date: "2026-04-06", type: "event", title: "Lunch at The Farmer's Dog", detail: "12:45 PM \u00B7 4 guests \u00B7 Burford OX18 4HJ \u00B7 Res: 3RJ8Z3SLR6J", location: "Oxfordshire", icon: "\uD83C\uDF7D\uFE0F" },
       { id: "h1", date: "2026-04-20", type: "stay", title: "Sheraton Paris CDG", detail: "Terminal 2C \u00B7 Check out Apr 21 8:35 AM", location: "Paris CDG", icon: "\uD83C\uDFE8" },
-      // Transfer legs
       { id: "x1", date: "2026-04-04", type: "transport", title: "Drive London \u2192 Oxfordshire", detail: "Maida Vale to Witney \u00B7 ~1.5 hrs via M40 \u00B7 Check out by 11:00 AM", location: "London", icon: "\uD83D\uDE97" },
-      { id: "x2", date: "2026-04-07", type: "transport", title: "Heathrow \u2192 St Pancras", detail: "~1:00 PM depart Heathrow \u00B7 Heathrow Express to Paddington (~15 min) + Tube/taxi to St Pancras (~30 min) \u00B7 Arrive by 2:30 PM for 3:31 PM Eurostar", location: "London", icon: "\uD83D\uDE87" },
-      { id: "x3", date: "2026-04-07", type: "transport", title: "RER Gare du Nord \u2192 Maisons-Laffitte", detail: "RER A from Ch\u00E2telet\u2013Les Halles \u00B7 ~30 min \u00B7 Transfer at Ch\u00E2telet from RER B/D", location: "Maisons-Laffitte", icon: "\uD83D\uDE87" },
-      { id: "x4", date: "2026-04-09", type: "transport", title: "Drive Paris Ternes \u2192 Loire Valley", detail: "After car pickup 11:30 AM \u00B7 ~2.5 hrs via A10 to Les Garennes sur Loire", location: "Loire Valley", icon: "\uD83D\uDE97" },
-      { id: "x5", date: "2026-04-13", type: "transport", title: "Drive Loire Valley \u2192 Saint-Briac", detail: "Les Garennes sur Loire to Saint-Briac-sur-Mer \u00B7 ~3.5 hrs via A11/A84", location: "Saint-Briac", icon: "\uD83D\uDE97" },
-      { id: "x6", date: "2026-04-20", type: "transport", title: "RER to CDG / Sheraton", detail: "Train arrives Paris Montparnasse \u00B7 M\u00E9tro to Ch\u00E2telet + RER B to CDG \u00B7 ~1 hr", location: "Paris CDG", icon: "\uD83D\uDE87" },
+      { id: "x2", date: "2026-04-07", type: "transport", title: "Heathrow \u2192 St Pancras", detail: "~1:00 PM depart Heathrow \u00B7 Heathrow Express + Tube/taxi \u00B7 Arrive by 2:30 PM", location: "London", icon: "\uD83D\uDE87" },
+      { id: "x3", date: "2026-04-07", type: "transport", title: "RER Gare du Nord \u2192 Maisons-Laffitte", detail: "RER B/D to Ch\u00E2telet + RER A \u00B7 ~30 min", location: "Maisons-Laffitte", icon: "\uD83D\uDE87" },
+      { id: "x4", date: "2026-04-09", type: "transport", title: "Drive Paris Ternes \u2192 Loire Valley", detail: "After car pickup 11:30 AM \u00B7 ~2.5 hrs via A10", location: "Loire Valley", icon: "\uD83D\uDE97" },
+      { id: "x5", date: "2026-04-13", type: "transport", title: "Drive Loire Valley \u2192 Saint-Briac", detail: "~3.5 hrs via A11/A84", location: "Saint-Briac", icon: "\uD83D\uDE97" },
+      { id: "x6", date: "2026-04-20", type: "transport", title: "RER to CDG / Sheraton", detail: "Montparnasse \u2192 M\u00E9tro \u2192 Ch\u00E2telet \u2192 RER B to CDG \u00B7 ~1 hr", location: "Paris CDG", icon: "\uD83D\uDE87" },
     ];
 
     const STAYS = [
-      { id: "s1", start: "2026-04-01", end: "2026-04-04", location: "London", title: "Maida Vale House", detail: "12B Greville Place, NW6 \u00B7 Host: Zoe \u00B7 Lockbox \u00B7 Conf: HMBQQ9ZYSA", checkIn: "4:00 PM", checkOut: "11:00 AM" },
-      { id: "s2", start: "2026-04-04", end: "2026-04-07", location: "Oxfordshire", title: "Witney Hideaway", detail: "25 The Crofts, OX28 \u00B7 Host: Amy \u00B7 Lockbox \u00B7 Conf: HMJXCM5PKW", checkIn: "3:00 PM", checkOut: "11:00 AM" },
-      { id: "s3", start: "2026-04-07", end: "2026-04-09", location: "Maisons-Laffitte", title: "Garden House near Paris", detail: "33 Rue des Canus \u00B7 Host: Beatrice \u00B7 Conf: HM8QJYFF3F", checkIn: "3:00 PM", checkOut: "11:00 AM" },
-      { id: "s4", start: "2026-04-09", end: "2026-04-13", location: "Loire Valley", title: "Cottage \"Le Pressoir\"", detail: "3 Clabeau, Les Garennes sur Loire \u00B7 Host: Jordane \u00B7 Pool! \u00B7 Conf: HMRKBJKCWR", checkIn: "4:00 PM", checkOut: "10:00 AM" },
-      { id: "s5", start: "2026-04-13", end: "2026-04-20", location: "Saint-Briac", title: "Aunt's Vacation Home", detail: "4 Rue de la Salinette, Saint-Briac-sur-Mer", checkIn: "", checkOut: "" },
-      { id: "s6", start: "2026-04-20", end: "2026-04-21", location: "Paris CDG", title: "Sheraton CDG Airport", detail: "Terminal 2C, Tremblay-en-France", checkIn: "", checkOut: "8:35 AM" },
+      { id: "s1", start: "2026-04-01", end: "2026-04-04", location: "London", title: "Maida Vale House", detail: "12B Greville Place, NW6", checkIn: "4:00 PM", checkOut: "11:00 AM", conf: "HMBQQ9ZYSA", host: "Zoe", mapsQuery: "12B Greville Place London NW6" },
+      { id: "s2", start: "2026-04-04", end: "2026-04-07", location: "Oxfordshire", title: "Witney Hideaway", detail: "25 The Crofts, OX28", checkIn: "3:00 PM", checkOut: "11:00 AM", conf: "HMJXCM5PKW", host: "Amy", mapsQuery: "25 The Crofts Witney OX28" },
+      { id: "s3", start: "2026-04-07", end: "2026-04-09", location: "Maisons-Laffitte", title: "Garden House near Paris", detail: "33 Rue des Canus", checkIn: "3:00 PM", checkOut: "11:00 AM", conf: "HM8QJYFF3F", host: "Beatrice", mapsQuery: "33 Rue des Canus Maisons-Laffitte" },
+      { id: "s4", start: "2026-04-09", end: "2026-04-13", location: "Loire Valley", title: "Cottage \"Le Pressoir\"", detail: "3 Clabeau, Les Garennes sur Loire", checkIn: "4:00 PM", checkOut: "10:00 AM", conf: "HMRKBJKCWR", host: "Jordane", mapsQuery: "3 Clabeau Les Garennes sur Loire" },
+      { id: "s5", start: "2026-04-13", end: "2026-04-20", location: "Saint-Briac", title: "Aunt's Vacation Home", detail: "4 Rue de la Salinette, Saint-Briac-sur-Mer", checkIn: "", checkOut: "", mapsQuery: "4 Rue de la Salinette Saint-Briac-sur-Mer" },
+      { id: "s6", start: "2026-04-20", end: "2026-04-21", location: "Paris CDG", title: "Sheraton CDG Airport", detail: "Terminal 2C, Tremblay-en-France", checkIn: "", checkOut: "8:35 AM", mapsQuery: "Sheraton Paris Charles de Gaulle Airport Hotel" },
     ];
 
     function getDays(startStr, endStr) {
@@ -111,19 +145,119 @@
       return <span style={{ background: b.bg, color: b.text, padding: "2px 8px", borderRadius: 9999, fontSize: 11, fontWeight: 600, letterSpacing: 0.3 }}>{b.label}</span>;
     }
 
-    function EventCard({ event, onDelete }) {
+    // Expanded event detail modal
+    function EventModal({ event, onClose, onUpdateComment }) {
+      const extra = EVENT_EXTRA[event.id] || {};
+      const [comment, setComment] = useState(event.comment || "");
+      const [saved, setSaved] = useState(false);
+      const overlayRef = useRef(null);
+
+      function handleSave() {
+        onUpdateComment(event.id, comment);
+        setSaved(true);
+        setTimeout(() => setSaved(false), 1500);
+      }
+
       return (
-        <div style={{ display: "flex", gap: 10, alignItems: "flex-start", padding: "10px 14px", background: "#fff", borderRadius: 10, border: "1px solid #e5e7eb", marginBottom: 6 }}>
+        <div className="modal-overlay" ref={overlayRef} onClick={(e) => { if (e.target === overlayRef.current) onClose(); }}>
+          <div className="modal-content">
+            <div style={{ padding: "20px 20px 0" }}>
+              {/* Header */}
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16 }}>
+                <div style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
+                  <span style={{ fontSize: 32 }}>{event.icon || "\uD83D\uDCCC"}</span>
+                  <div>
+                    <h2 style={{ fontSize: 18, fontWeight: 700, color: "#111827", margin: 0 }}>{event.title}</h2>
+                    <div style={{ display: "flex", gap: 6, marginTop: 4 }}>
+                      <Badge type={event.type} />
+                      <span style={{ fontSize: 12, color: "#6b7280" }}>{formatDate(event.date)}</span>
+                    </div>
+                  </div>
+                </div>
+                <button onClick={onClose} style={{ background: "#f3f4f6", border: "none", borderRadius: 8, width: 32, height: 32, fontSize: 18, cursor: "pointer", color: "#6b7280", display: "flex", alignItems: "center", justifyContent: "center" }}>&times;</button>
+              </div>
+
+              {/* Detail summary */}
+              {event.detail && (
+                <div style={{ padding: "10px 12px", background: "#f9fafb", borderRadius: 8, marginBottom: 16, fontSize: 13, color: "#374151", lineHeight: 1.5, userSelect: "text" }}>
+                  {event.detail}
+                </div>
+              )}
+
+              {/* Structured details */}
+              <div style={{ marginBottom: 16 }}>
+                {extra.conf && (
+                  <div className="detail-row">
+                    <span className="detail-label">Confirmation</span>
+                    <span className="detail-value" style={{ fontFamily: "monospace", fontWeight: 600, fontSize: 14 }}>{extra.conf}</span>
+                  </div>
+                )}
+                {extra.address && (
+                  <div className="detail-row">
+                    <span className="detail-label">Address</span>
+                    <span className="detail-value">{extra.address}</span>
+                  </div>
+                )}
+                {extra.mapsQuery && (
+                  <div className="detail-row">
+                    <span className="detail-label">Navigate</span>
+                    <span className="detail-value">
+                      <a href={mapsUrl(extra.mapsQuery)} target="_blank" rel="noopener noreferrer" className="maps-link">
+                        {"\uD83D\uDDFA\uFE0F"} Open in Google Maps
+                      </a>
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              {/* Extended notes */}
+              {extra.notes && (
+                <div style={{ marginBottom: 16 }}>
+                  <div style={{ fontSize: 12, fontWeight: 600, color: "#6b7280", textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 6 }}>Details & Notes</div>
+                  <pre style={{ padding: "12px 14px", background: "#f9fafb", borderRadius: 8, fontSize: 13, color: "#374151", lineHeight: 1.6, whiteSpace: "pre-wrap", fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", userSelect: "text", border: "1px solid #e5e7eb" }}>{extra.notes}</pre>
+                </div>
+              )}
+
+              {/* Comments */}
+              <div style={{ marginBottom: 20 }}>
+                <div style={{ fontSize: 12, fontWeight: 600, color: "#6b7280", textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 6 }}>Comments / Notes</div>
+                <textarea
+                  className="comment-box"
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                  placeholder="Add notes, reminders, links..."
+                />
+                <div style={{ display: "flex", gap: 8, marginTop: 6, alignItems: "center" }}>
+                  <button onClick={handleSave} style={{ padding: "6px 16px", borderRadius: 8, border: "none", background: "#4338ca", color: "#fff", fontWeight: 600, fontSize: 13, cursor: "pointer" }}>Save</button>
+                  {saved && <span style={{ fontSize: 12, color: "#10b981" }}>{"\u2705"} Saved!</span>}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    function EventCard({ event, onDelete, onClick }) {
+      const extra = EVENT_EXTRA[event.id] || {};
+      return (
+        <div onClick={() => onClick(event)} style={{ display: "flex", gap: 10, alignItems: "flex-start", padding: "10px 14px", background: "#fff", borderRadius: 10, border: "1px solid #e5e7eb", marginBottom: 6, cursor: "pointer", transition: "box-shadow 0.15s" }} onMouseOver={(e) => e.currentTarget.style.boxShadow = "0 2px 8px rgba(0,0,0,0.08)"} onMouseOut={(e) => e.currentTarget.style.boxShadow = "none"}>
           <span style={{ fontSize: 22, lineHeight: 1.2, flexShrink: 0, marginTop: 2 }}>{event.icon || "\uD83D\uDCCC"}</span>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
               <span style={{ fontWeight: 600, fontSize: 14, color: "#111827" }}>{event.title}</span>
               <Badge type={event.type} />
+              {event.comment && <span style={{ fontSize: 11, color: "#9ca3af" }}>{"\uD83D\uDCAC"}</span>}
             </div>
             {event.detail && <div style={{ fontSize: 13, color: "#6b7280", marginTop: 3, lineHeight: 1.4 }}>{event.detail}</div>}
+            {extra.mapsQuery && (
+              <a href={mapsUrl(extra.mapsQuery)} target="_blank" rel="noopener noreferrer" className="maps-link" onClick={(e) => e.stopPropagation()}>
+                {"\uD83D\uDDFA\uFE0F"} Maps
+              </a>
+            )}
           </div>
           {event.type === "custom" && (
-            <button onClick={() => onDelete(event.id)} style={{ background: "none", border: "none", cursor: "pointer", color: "#9ca3af", fontSize: 16, padding: "2px 4px", flexShrink: 0 }} title="Remove">&times;</button>
+            <button onClick={(e) => { e.stopPropagation(); onDelete(event.id); }} style={{ background: "none", border: "none", cursor: "pointer", color: "#9ca3af", fontSize: 16, padding: "2px 4px", flexShrink: 0 }} title="Remove">&times;</button>
           )}
         </div>
       );
@@ -136,7 +270,7 @@
       const icons = ["\uD83D\uDCCC", "\uD83C\uDF7D\uFE0F", "\uD83C\uDFDB\uFE0F", "\uD83D\uDEB6", "\uD83C\uDFAD", "\uD83D\uDECD\uFE0F", "\u26EA", "\uD83C\uDF77", "\uD83C\uDFD6\uFE0F", "\uD83D\uDCF8", "\uD83C\uDFB5", "\u26F5"];
 
       return (
-        <div style={{ padding: 14, background: "#f0f4ff", borderRadius: 10, border: "1px solid #c7d2fe", marginBottom: 6 }}>
+        <div style={{ padding: 14, background: "#f0f4ff", borderRadius: 10, border: "1px solid #c7d2fe", marginBottom: 6 }} onClick={(e) => e.stopPropagation()}>
           <div style={{ fontSize: 13, fontWeight: 600, color: "#4338ca", marginBottom: 10 }}>Add plan for {formatDate(date)}</div>
           <div style={{ display: "flex", gap: 6, marginBottom: 8, flexWrap: "wrap" }}>
             {icons.map(e => (
@@ -153,7 +287,7 @@
       );
     }
 
-    function DayCard({ date, events, stay, onAddEvent, onDeleteEvent, isToday }) {
+    function DayCard({ date, events, stay, onAddEvent, onDeleteEvent, onEventClick, isToday }) {
       const [adding, setAdding] = useState(false);
       const d = new Date(date + "T12:00:00");
       const dayNum = d.getDate();
@@ -187,6 +321,11 @@
                     <div style={{ fontSize: 13, fontWeight: 600, color: "#065f46" }}>Check in: {isCheckIn.title}</div>
                     {isCheckIn.checkIn && <div style={{ fontSize: 12, color: "#059669" }}>After {isCheckIn.checkIn}</div>}
                     <div style={{ fontSize: 12, color: "#6b7280" }}>{isCheckIn.detail}</div>
+                    {isCheckIn.mapsQuery && (
+                      <a href={mapsUrl(isCheckIn.mapsQuery)} target="_blank" rel="noopener noreferrer" className="maps-link" style={{ marginTop: 4 }}>
+                        {"\uD83D\uDDFA\uFE0F"} Maps
+                      </a>
+                    )}
                   </div>
                 </div>
               )}
@@ -201,7 +340,7 @@
               )}
             </div>
             <div style={{ paddingLeft: 8 }}>
-              {events.map(ev => <EventCard key={ev.id} event={ev} onDelete={onDeleteEvent} />)}
+              {events.map(ev => <EventCard key={ev.id} event={ev} onDelete={onDeleteEvent} onClick={onEventClick} />)}
               {adding ? (
                 <AddEventForm date={date} onAdd={(ev) => { onAddEvent(ev); setAdding(false); }} onCancel={() => setAdding(false)} />
               ) : (
@@ -228,6 +367,11 @@
                 <div style={{ fontSize: 12, color: "#6b7280" }}>{s.title}</div>
                 <div style={{ fontSize: 12, fontWeight: 600, color: loc.color, marginTop: 4 }}>{nights} night{nights > 1 ? "s" : ""}</div>
                 <div style={{ fontSize: 11, color: "#9ca3af" }}>{formatDate(s.start).split(", ")[1]} {"\u2013"} {formatDate(s.end).split(", ")[1]}</div>
+                {s.mapsQuery && (
+                  <a href={mapsUrl(s.mapsQuery)} target="_blank" rel="noopener noreferrer" className="maps-link" style={{ marginTop: 6 }}>
+                    {"\uD83D\uDDFA\uFE0F"} Maps
+                  </a>
+                )}
               </div>
             );
           })}
@@ -235,11 +379,10 @@
       );
     }
 
-    // Connection status indicator
     function SyncStatus({ connected, syncing }) {
-      if (syncing) return <span style={{ fontSize: 12, color: "#f59e0b", display: "flex", alignItems: "center", gap: 4 }}>{"\u26A1"} Syncing...</span>;
-      if (connected) return <span style={{ fontSize: 12, color: "#10b981", display: "flex", alignItems: "center", gap: 4 }}>{"\u2705"} Live synced</span>;
-      return <span style={{ fontSize: 12, color: "#ef4444", display: "flex", alignItems: "center", gap: 4 }}>{"\u274C"} Offline</span>;
+      if (syncing) return <span style={{ fontSize: 12, color: "#f59e0b", display: "flex", alignItems: "center", gap: 4, justifyContent: "center" }}>{"\u26A1"} Syncing...</span>;
+      if (connected) return <span style={{ fontSize: 12, color: "#10b981", display: "flex", alignItems: "center", gap: 4, justifyContent: "center" }}>{"\u2705"} Live synced</span>;
+      return <span style={{ fontSize: 12, color: "#ef4444", display: "flex", alignItems: "center", gap: 4, justifyContent: "center" }}>{"\u274C"} Offline</span>;
     }
 
     function TripPlanner() {
@@ -248,24 +391,21 @@
       const [connected, setConnected] = useState(false);
       const [syncing, setSyncing] = useState(true);
       const [loaded, setLoaded] = useState(false);
+      const [selectedEvent, setSelectedEvent] = useState(null);
 
       const today = new Date().toISOString().slice(0, 10);
       const eventsRef = db.ref("events");
 
-      // Listen for real-time changes from Firebase
       useEffect(() => {
-        // Track connection state
         const connRef = db.ref(".info/connected");
         connRef.on("value", (snap) => setConnected(!!snap.val()));
 
-        // Listen for all events
         eventsRef.on("value", (snapshot) => {
           const data = snapshot.val();
           if (data) {
             const arr = Object.entries(data).map(([key, val]) => ({ ...val, id: key }));
             setEvents(arr);
           } else {
-            // DB is empty — seed it with initial events
             SEED_EVENTS.forEach(ev => {
               eventsRef.child(ev.id).set(ev);
             });
@@ -274,10 +414,7 @@
           setLoaded(true);
         });
 
-        return () => {
-          connRef.off();
-          eventsRef.off();
-        };
+        return () => { connRef.off(); eventsRef.off(); };
       }, []);
 
       const addEvent = useCallback((ev) => {
@@ -287,6 +424,10 @@
 
       const deleteEvent = useCallback((id) => {
         eventsRef.child(id).remove();
+      }, []);
+
+      const updateComment = useCallback((id, comment) => {
+        eventsRef.child(id).update({ comment });
       }, []);
 
       const eventsByDate = useMemo(() => {
@@ -316,6 +457,13 @@
 
       return (
         <div style={{ maxWidth: 680, margin: "0 auto", fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", padding: "24px 16px", background: "#f9fafb", minHeight: "100vh" }}>
+          {selectedEvent && (
+            <EventModal
+              event={selectedEvent}
+              onClose={() => setSelectedEvent(null)}
+              onUpdateComment={updateComment}
+            />
+          )}
           <div style={{ textAlign: "center", marginBottom: 24 }}>
             <h1 style={{ fontSize: 26, fontWeight: 800, color: "#111827", margin: 0 }}>Europe 2026</h1>
             <p style={{ fontSize: 14, color: "#6b7280", margin: "4px 0 0" }}>Joe, Emily & Chloe &middot; March 31 &ndash; April 21 &middot; 22 days</p>
@@ -342,7 +490,7 @@
                 {showAprilHeader && (
                   <div style={{ fontSize: 13, fontWeight: 700, color: "#9ca3af", textTransform: "uppercase", letterSpacing: 1.5, marginBottom: 12, marginTop: 8, paddingLeft: 36 }}>April 2026</div>
                 )}
-                <DayCard date={date} events={dayEvents} stay={stay} onAddEvent={addEvent} onDeleteEvent={deleteEvent} isToday={date === today} />
+                <DayCard date={date} events={dayEvents} stay={stay} onAddEvent={addEvent} onDeleteEvent={deleteEvent} onEventClick={setSelectedEvent} isToday={date === today} />
               </div>
             );
           })}

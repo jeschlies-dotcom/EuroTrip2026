@@ -405,6 +405,19 @@
           if (data) {
             const arr = Object.entries(data).map(([key, val]) => ({ ...val, id: key }));
             setEvents(arr);
+            // Ensure any missing seed events get written (handles new events added after initial seed)
+            const existingIds = new Set(Object.keys(data));
+            SEED_EVENTS.forEach(ev => {
+              if (!existingIds.has(ev.id)) {
+                eventsRef.child(ev.id).set(ev);
+              }
+            });
+            // Also update seed events if their details changed
+            SEED_EVENTS.forEach(ev => {
+              if (existingIds.has(ev.id) && data[ev.id].detail !== ev.detail) {
+                eventsRef.child(ev.id).update({ detail: ev.detail, title: ev.title });
+              }
+            });
           } else {
             SEED_EVENTS.forEach(ev => {
               eventsRef.child(ev.id).set(ev);

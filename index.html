@@ -20,6 +20,7 @@
     .detail-label { color: #6b7280; min-width: 80px; flex-shrink: 0; font-weight: 500; }
     .detail-value { color: #111827; word-break: break-word; user-select: text; }
     .comment-box { width: 100%; min-height: 60px; padding: 8px 10px; border-radius: 8px; border: 1px solid #d1d5db; font-size: 13px; font-family: inherit; resize: vertical; }
+    .edit-input { width: 100%; padding: 8px 10px; border-radius: 8px; border: 1px solid #d1d5db; font-size: 13px; font-family: inherit; }
   </style>
 </head>
 <body>
@@ -69,7 +70,7 @@
       "w2": { address: "Caswell House, Brize Norton, OX18 3NJ", mapsQuery: "Caswell House Brize Norton Oxfordshire", notes: "Wedding of Lucy & James\nCaswell House, Brize Norton OX18 3NJ\nArrive by 1:15 PM\nCeremony: 2:00 PM\nDress code: Formal attire\nTaxi companies: 001 Taxis (01993 700 001), Carterton Cars" },
       "d1": { address: "The Farmer's Dog, 19 High St, Burford OX18 4HJ", conf: "3RJ8Z3SLR6J", mapsQuery: "The Farmer's Dog Burford Oxfordshire", notes: "Lunch reservation\nTime: 12:45 PM\n4 guests\nConf: 3RJ8Z3SLR6J\nAddress: 19 High St, Burford OX18 4HJ" },
       "h1": { address: "Sheraton Paris CDG, Terminal 2C, 95716 Tremblay-en-France", mapsQuery: "Sheraton Paris Charles de Gaulle Airport Hotel", notes: "Sheraton Paris CDG Airport\nTerminal 2C, Tremblay-en-France\nCheck out: Apr 21 8:35 AM\nConvenient for early BA301 flight at 10:35 AM" },
-      "x1": { mapsQuery: "12B Greville Place London NW6 to Witney Oxfordshire", notes: "Drive from Maida Vale to Witney\n~1.5 hrs via M40\nCheck out Airbnb by 11:00 AM" },
+      "x1": { mapsQuery: "12B Greville Place London NW6 to Witney Oxfordshire", notes: "Drive from Maida Vale to Witney\n~1.5 hrs via M40\nCheck out by 11:00 AM" },
       "x2": { address: "Heathrow Airport to St Pancras International", notes: "Heathrow Express: Heathrow Central \u2192 London Paddington (~15 min, trains every 15 min)\nThen: Tube from Paddington \u2192 King's Cross St Pancras (Hammersmith & City or Circle line, ~20 min)\nOr taxi Paddington \u2192 St Pancras (~15 min, \u00A315\u201320)\n\nTotal: ~45\u201360 min\nAllow 1.5 hrs with luggage + baby\nDepart Heathrow ~1:00 PM \u2192 Arrive St Pancras by 2:30 PM" },
       "x3": { notes: "From Gare du Nord (Eurostar arrival at 6:59 PM):\n\n1. Walk to RER B/D platforms at Gare du Nord\n2. Take RER B or D one stop south to Ch\u00E2telet\u2013Les Halles (~3 min)\n3. Transfer to RER A (direction Saint-Germain-en-Laye or Cergy)\n4. RER A to Maisons-Laffitte station (~18 min)\n\nStations: Gare du Nord \u2192 Ch\u00E2telet\u2013Les Halles \u2192 Auber \u2192 Charles de Gaulle \u00C9toile \u2192 La D\u00E9fense \u2192 Nanterre Pr\u00E9fecture \u2192 Houilles-Carri\u00E8res \u2192 Sartrouville \u2192 Maisons-Laffitte\n\nTotal: ~25\u201330 min\nEvening trains run every 10\u201315 min\nBuy Navigo Easy card or t+ tickets at station" },
       "x4": { mapsQuery: "24 Avenue de la Grande Arm\u00E9e Paris to Les Garennes sur Loire", notes: "After car pickup at 11:30 AM\nDrive south via A10 autoroute\n~2.5 hrs (250 km)\nTolls: ~\u20AC15\u201320\nStop options: Orl\u00E9ans or Tours for lunch" },
@@ -114,7 +115,7 @@
       { id: "s2", start: "2026-04-04", end: "2026-04-07", location: "Oxfordshire", title: "Witney Hideaway", detail: "25 The Crofts, OX28", checkIn: "3:00 PM", checkOut: "11:00 AM", conf: "HMJXCM5PKW", host: "Amy", mapsQuery: "25 The Crofts Witney OX28" },
       { id: "s3", start: "2026-04-07", end: "2026-04-09", location: "Maisons-Laffitte", title: "Garden House near Paris", detail: "33 Rue des Canus", checkIn: "3:00 PM", checkOut: "11:00 AM", conf: "HM8QJYFF3F", host: "Beatrice", mapsQuery: "33 Rue des Canus Maisons-Laffitte" },
       { id: "s4", start: "2026-04-09", end: "2026-04-13", location: "Loire Valley", title: "Cottage \"Le Pressoir\"", detail: "3 Clabeau, Les Garennes sur Loire", checkIn: "4:00 PM", checkOut: "10:00 AM", conf: "HMRKBJKCWR", host: "Jordane", mapsQuery: "3 Clabeau Les Garennes sur Loire" },
-      { id: "s5", start: "2026-04-13", end: "2026-04-20", location: "Saint-Briac", title: "Aunt's Vacation Home", detail: "4 Rue de la Salinette, Saint-Briac-sur-Mer", checkIn: "", checkOut: "", mapsQuery: "4 Rue de la Salinette Saint-Briac-sur-Mer" },
+      { id: "s5", start: "2026-04-13", end: "2026-04-20", location: "Saint-Briac", title: "Tanya's Vacation Home", detail: "4 Rue de la Salinette, Saint-Briac-sur-Mer", checkIn: "", checkOut: "", mapsQuery: "4 Rue de la Salinette Saint-Briac-sur-Mer" },
       { id: "s6", start: "2026-04-20", end: "2026-04-21", location: "Paris CDG", title: "Sheraton CDG Airport", detail: "Terminal 2C, Tremblay-en-France", checkIn: "", checkOut: "8:35 AM", mapsQuery: "Sheraton Paris Charles de Gaulle Airport Hotel" },
     ];
 
@@ -155,15 +156,117 @@
       return <span style={{ background: b.bg, color: b.text, padding: "2px 8px", borderRadius: 9999, fontSize: 11, fontWeight: 600, letterSpacing: 0.3 }}>{b.label}</span>;
     }
 
-    // Expanded event detail modal
-    function EventModal({ event, onClose, onUpdateComment }) {
+    // Stay Modal - shows full stay details with Airbnb link
+    function StayModal({ stay, onClose }) {
+      const overlayRef = useRef(null);
+      const airbnbUrl = stay.conf ? `https://www.airbnb.com/trips/v1/${stay.conf}/details` : null;
+
+      return (
+        <div className="modal-overlay" ref={overlayRef} onClick={(e) => { if (e.target === overlayRef.current) onClose(); }}>
+          <div className="modal-content">
+            <div style={{ padding: "20px 20px 0" }}>
+              {/* Header */}
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16 }}>
+                <div style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
+                  <span style={{ fontSize: 32 }}>{LOCATIONS[stay.location]?.emoji || "\uD83C\uDFE8"}</span>
+                  <div>
+                    <h2 style={{ fontSize: 18, fontWeight: 700, color: "#111827", margin: 0 }}>{stay.title}</h2>
+                    <div style={{ display: "flex", gap: 6, marginTop: 4 }}>
+                      <Badge type="stay" />
+                      <span style={{ fontSize: 12, color: "#6b7280" }}>{formatDate(stay.start)} \u2013 {formatDate(stay.end)}</span>
+                    </div>
+                  </div>
+                </div>
+                <button onClick={onClose} style={{ background: "#f3f4f6", border: "none", borderRadius: 8, width: 32, height: 32, fontSize: 18, cursor: "pointer", color: "#6b7280", display: "flex", alignItems: "center", justifyContent: "center" }}>&times;</button>
+              </div>
+
+              {/* Structured details */}
+              <div style={{ marginBottom: 16 }}>
+                {stay.host && (
+                  <div className="detail-row">
+                    <span className="detail-label">Host</span>
+                    <span className="detail-value">{stay.host}</span>
+                  </div>
+                )}
+                {stay.detail && (
+                  <div className="detail-row">
+                    <span className="detail-label">Address</span>
+                    <span className="detail-value">{stay.detail}</span>
+                  </div>
+                )}
+                {stay.checkIn && (
+                  <div className="detail-row">
+                    <span className="detail-label">Check In</span>
+                    <span className="detail-value">{stay.checkIn}</span>
+                  </div>
+                )}
+                {stay.checkOut && (
+                  <div className="detail-row">
+                    <span className="detail-label">Check Out</span>
+                    <span className="detail-value">{stay.checkOut}</span>
+                  </div>
+                )}
+                {stay.conf && (
+                  <div className="detail-row">
+                    <span className="detail-label">Confirmation</span>
+                    <span className="detail-value" style={{ fontFamily: "monospace", fontWeight: 600, fontSize: 14 }}>{stay.conf}</span>
+                  </div>
+                )}
+                {stay.mapsQuery && (
+                  <div className="detail-row">
+                    <span className="detail-label">Navigate</span>
+                    <span className="detail-value">
+                      <a href={mapsUrl(stay.mapsQuery)} target="_blank" rel="noopener noreferrer" className="maps-link">
+                        {"\uD83D\uDDFA\uFE0F"} Open in Google Maps
+                      </a>
+                    </span>
+                  </div>
+                )}
+                {airbnbUrl && (
+                  <div className="detail-row">
+                    <span className="detail-label">Booking</span>
+                    <span className="detail-value">
+                      <a href={airbnbUrl} target="_blank" rel="noopener noreferrer" className="maps-link" style={{ background: "#fff7ed", color: "#ea580c", borderColor: "#fed7aa" }}>
+                        {"\uD83C\uDFE7"} Airbnb Reservation
+                      </a>
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // Expanded event detail modal with full editing capabilities
+    function EventModal({ event, onClose, onUpdateComment, onUpdateEvent }) {
       const extra = EVENT_EXTRA[event.id] || {};
       const [comment, setComment] = useState(event.comment || "");
+      const [editTitle, setEditTitle] = useState(event.title);
+      const [editDetail, setEditDetail] = useState(event.detail || "");
+      const [editIcon, setEditIcon] = useState(event.icon || "\uD83D\uDCCC");
+      const [isEditing, setIsEditing] = useState(false);
       const [saved, setSaved] = useState(false);
       const overlayRef = useRef(null);
 
-      function handleSave() {
+      const icons = ["\uD83D\uDCCC", "\uD83C\uDF7D\uFE0F", "\uD83C\uDFDB\uFE0F", "\uD83D\uDEB6", "\uD83C\uDFAD", "\uD83D\uDECD\uFE0F", "\u26EA", "\uD83C\uDF77", "\uD83C\uDFD6\uFE0F", "\uD83D\uDCF8", "\uD83C\uDFB5", "\u26F5", "\u2708\uFE0F", "\uD83D\uDE97", "\uD83D\uDE87", "\uD83D\uDE84", "\uD83E\uDD42", "\uD83D\uDC92"];
+
+      function handleSaveComment() {
         onUpdateComment(event.id, comment);
+        setSaved(true);
+        setTimeout(() => setSaved(false), 1500);
+      }
+
+      function handleSaveEdit() {
+        const updates = {};
+        if (editTitle !== event.title) updates.title = editTitle;
+        if (editDetail !== (event.detail || "")) updates.detail = editDetail;
+        if (editIcon !== event.icon) updates.icon = editIcon;
+        if (Object.keys(updates).length > 0) {
+          onUpdateEvent(event.id, updates);
+        }
+        setIsEditing(false);
         setSaved(true);
         setTimeout(() => setSaved(false), 1500);
       }
@@ -174,74 +277,108 @@
             <div style={{ padding: "20px 20px 0" }}>
               {/* Header */}
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16 }}>
-                <div style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
-                  <span style={{ fontSize: 32 }}>{event.icon || "\uD83D\uDCCC"}</span>
-                  <div>
-                    <h2 style={{ fontSize: 18, fontWeight: 700, color: "#111827", margin: 0 }}>{event.title}</h2>
-                    <div style={{ display: "flex", gap: 6, marginTop: 4 }}>
-                      <Badge type={event.type} />
-                      <span style={{ fontSize: 12, color: "#6b7280" }}>{formatDate(event.date)}</span>
+                {isEditing ? (
+                  <div style={{ display: "flex", gap: 6, flexWrap: "wrap", flex: 1 }}>
+                    {icons.map(e => (
+                      <button key={e} onClick={() => setEditIcon(e)} style={{ fontSize: 18, padding: "4px 6px", borderRadius: 6, border: editIcon === e ? "2px solid #4338ca" : "2px solid transparent", background: editIcon === e ? "#e0e7ff" : "#fff", cursor: "pointer" }}>{e}</button>
+                    ))}
+                  </div>
+                ) : (
+                  <div style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
+                    <span style={{ fontSize: 32 }}>{editIcon}</span>
+                    <div>
+                      <h2 style={{ fontSize: 18, fontWeight: 700, color: "#111827", margin: 0 }}>{editTitle}</h2>
+                      <div style={{ display: "flex", gap: 6, marginTop: 4 }}>
+                        <Badge type={event.type} />
+                        <span style={{ fontSize: 12, color: "#6b7280" }}>{formatDate(event.date)}</span>
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
                 <button onClick={onClose} style={{ background: "#f3f4f6", border: "none", borderRadius: 8, width: 32, height: 32, fontSize: 18, cursor: "pointer", color: "#6b7280", display: "flex", alignItems: "center", justifyContent: "center" }}>&times;</button>
               </div>
 
-              {/* Detail summary */}
-              {event.detail && (
-                <div style={{ padding: "10px 12px", background: "#f9fafb", borderRadius: 8, marginBottom: 16, fontSize: 13, color: "#374151", lineHeight: 1.5, userSelect: "text" }}>
-                  {event.detail}
+              {/* Edit mode or detail summary */}
+              {isEditing ? (
+                <div style={{ marginBottom: 16 }}>
+                  <div style={{ fontSize: 12, fontWeight: 600, color: "#6b7280", marginBottom: 6 }}>TITLE</div>
+                  <input className="edit-input" value={editTitle} onChange={(e) => setEditTitle(e.target.value)} style={{ marginBottom: 10 }} />
+                  <div style={{ fontSize: 12, fontWeight: 600, color: "#6b7280", marginBottom: 6 }}>DETAIL</div>
+                  <textarea className="edit-input" value={editDetail} onChange={(e) => setEditDetail(e.target.value)} style={{ marginBottom: 10, minHeight: 60 }} />
+                  <div style={{ display: "flex", gap: 8 }}>
+                    <button onClick={handleSaveEdit} style={{ padding: "6px 16px", borderRadius: 8, border: "none", background: "#4338ca", color: "#fff", fontWeight: 600, fontSize: 13, cursor: "pointer" }}>Save Edit</button>
+                    <button onClick={() => { setIsEditing(false); setEditTitle(event.title); setEditDetail(event.detail || ""); setEditIcon(event.icon); }} style={{ padding: "6px 16px", borderRadius: 8, border: "1px solid #d1d5db", background: "#fff", color: "#374151", fontSize: 13, cursor: "pointer" }}>Cancel</button>
+                  </div>
                 </div>
+              ) : (
+                <>
+                  {editDetail && (
+                    <div style={{ padding: "10px 12px", background: "#f9fafb", borderRadius: 8, marginBottom: 16, fontSize: 13, color: "#374151", lineHeight: 1.5, userSelect: "text" }}>
+                      {editDetail}
+                    </div>
+                  )}
+                </>
               )}
 
               {/* Structured details */}
-              <div style={{ marginBottom: 16 }}>
-                {extra.conf && (
-                  <div className="detail-row">
-                    <span className="detail-label">Confirmation</span>
-                    <span className="detail-value" style={{ fontFamily: "monospace", fontWeight: 600, fontSize: 14 }}>{extra.conf}</span>
-                  </div>
-                )}
-                {extra.address && (
-                  <div className="detail-row">
-                    <span className="detail-label">Address</span>
-                    <span className="detail-value">{extra.address}</span>
-                  </div>
-                )}
-                {extra.mapsQuery && (
-                  <div className="detail-row">
-                    <span className="detail-label">Navigate</span>
-                    <span className="detail-value">
-                      <a href={mapsUrl(extra.mapsQuery)} target="_blank" rel="noopener noreferrer" className="maps-link">
-                        {"\uD83D\uDDFA\uFE0F"} Open in Google Maps
-                      </a>
-                    </span>
-                  </div>
-                )}
-              </div>
+              {!isEditing && (
+                <div style={{ marginBottom: 16 }}>
+                  {extra.conf && (
+                    <div className="detail-row">
+                      <span className="detail-label">Confirmation</span>
+                      <span className="detail-value" style={{ fontFamily: "monospace", fontWeight: 600, fontSize: 14 }}>{extra.conf}</span>
+                    </div>
+                  )}
+                  {extra.address && (
+                    <div className="detail-row">
+                      <span className="detail-label">Address</span>
+                      <span className="detail-value">{extra.address}</span>
+                    </div>
+                  )}
+                  {extra.mapsQuery && (
+                    <div className="detail-row">
+                      <span className="detail-label">Navigate</span>
+                      <span className="detail-value">
+                        <a href={mapsUrl(extra.mapsQuery)} target="_blank" rel="noopener noreferrer" className="maps-link">
+                          {"\uD83D\uDDFA\uFE0F"} Open in Google Maps
+                        </a>
+                      </span>
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* Extended notes */}
-              {extra.notes && (
+              {!isEditing && extra.notes && (
                 <div style={{ marginBottom: 16 }}>
                   <div style={{ fontSize: 12, fontWeight: 600, color: "#6b7280", textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 6 }}>Details & Notes</div>
                   <pre style={{ padding: "12px 14px", background: "#f9fafb", borderRadius: 8, fontSize: 13, color: "#374151", lineHeight: 1.6, whiteSpace: "pre-wrap", fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", userSelect: "text", border: "1px solid #e5e7eb" }}>{extra.notes}</pre>
                 </div>
               )}
 
-              {/* Comments */}
-              <div style={{ marginBottom: 20 }}>
-                <div style={{ fontSize: 12, fontWeight: 600, color: "#6b7280", textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 6 }}>Comments / Notes</div>
-                <textarea
-                  className="comment-box"
-                  value={comment}
-                  onChange={(e) => setComment(e.target.value)}
-                  placeholder="Add notes, reminders, links..."
-                />
-                <div style={{ display: "flex", gap: 8, marginTop: 6, alignItems: "center" }}>
-                  <button onClick={handleSave} style={{ padding: "6px 16px", borderRadius: 8, border: "none", background: "#4338ca", color: "#fff", fontWeight: 600, fontSize: 13, cursor: "pointer" }}>Save</button>
-                  {saved && <span style={{ fontSize: 12, color: "#10b981" }}>{"\u2705"} Saved!</span>}
+              {/* Edit button */}
+              {!isEditing && (
+                <div style={{ marginBottom: 16 }}>
+                  <button onClick={() => setIsEditing(true)} style={{ padding: "6px 16px", borderRadius: 8, border: "1px solid #d1d5db", background: "#fff", color: "#374151", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>Edit Event</button>
                 </div>
-              </div>
+              )}
+
+              {/* Comments */}
+              {!isEditing && (
+                <div style={{ marginBottom: 20 }}>
+                  <div style={{ fontSize: 12, fontWeight: 600, color: "#6b7280", textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 6 }}>Comments / Notes</div>
+                  <textarea
+                    className="comment-box"
+                    value={comment}
+                    onChange={(e) => setComment(e.target.value)}
+                    placeholder="Add notes, reminders, links..."
+                  />
+                  <div style={{ display: "flex", gap: 8, marginTop: 6, alignItems: "center" }}>
+                    <button onClick={handleSaveComment} style={{ padding: "6px 16px", borderRadius: 8, border: "none", background: "#4338ca", color: "#fff", fontWeight: 600, fontSize: 13, cursor: "pointer" }}>Save</button>
+                    {saved && <span style={{ fontSize: 12, color: "#10b981" }}>{"\u2705"} Saved!</span>}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -276,8 +413,15 @@
     function AddEventForm({ date, onAdd, onCancel }) {
       const [title, setTitle] = useState("");
       const [detail, setDetail] = useState("");
+      const [time, setTime] = useState("");
       const [icon, setIcon] = useState("\uD83D\uDCCC");
       const icons = ["\uD83D\uDCCC", "\uD83C\uDF7D\uFE0F", "\uD83C\uDFDB\uFE0F", "\uD83D\uDEB6", "\uD83C\uDFAD", "\uD83D\uDECD\uFE0F", "\u26EA", "\uD83C\uDF77", "\uD83C\uDFD6\uFE0F", "\uD83D\uDCF8", "\uD83C\uDFB5", "\u26F5"];
+
+      function timeToSortTime(timeStr) {
+        if (!timeStr) return null;
+        const [h, m] = timeStr.split(":");
+        return (parseInt(h) * 100 + parseInt(m)).toString();
+      }
 
       return (
         <div style={{ padding: 14, background: "#f0f4ff", borderRadius: 10, border: "1px solid #c7d2fe", marginBottom: 6 }} onClick={(e) => e.stopPropagation()}>
@@ -288,9 +432,13 @@
             ))}
           </div>
           <input value={title} onChange={e => setTitle(e.target.value)} placeholder="What's the plan?" style={{ width: "100%", padding: "8px 10px", borderRadius: 8, border: "1px solid #d1d5db", fontSize: 14, marginBottom: 6, boxSizing: "border-box" }} />
-          <input value={detail} onChange={e => setDetail(e.target.value)} placeholder="Details (time, address, notes...)" style={{ width: "100%", padding: "8px 10px", borderRadius: 8, border: "1px solid #d1d5db", fontSize: 13, marginBottom: 10, boxSizing: "border-box" }} />
+          <input value={detail} onChange={e => setDetail(e.target.value)} placeholder="Details (address, notes...)" style={{ width: "100%", padding: "8px 10px", borderRadius: 8, border: "1px solid #d1d5db", fontSize: 13, marginBottom: 6, boxSizing: "border-box" }} />
+          <div style={{ marginBottom: 10 }}>
+            <label style={{ fontSize: 13, color: "#6b7280", display: "block", marginBottom: 4 }}>Time (optional)</label>
+            <input type="time" value={time} onChange={e => setTime(e.target.value)} style={{ width: "100%", padding: "8px 10px", borderRadius: 8, border: "1px solid #d1d5db", fontSize: 13, boxSizing: "border-box" }} />
+          </div>
           <div style={{ display: "flex", gap: 8 }}>
-            <button onClick={() => { if (title.trim()) { onAdd({ date, type: "custom", title: title.trim(), detail: detail.trim(), icon }); } }} disabled={!title.trim()} style={{ padding: "6px 16px", borderRadius: 8, border: "none", background: title.trim() ? "#4338ca" : "#c7d2fe", color: "#fff", fontWeight: 600, fontSize: 13, cursor: title.trim() ? "pointer" : "default" }}>Add</button>
+            <button onClick={() => { if (title.trim()) { const sortTime = timeToSortTime(time); onAdd({ date, type: "custom", title: title.trim(), detail: detail.trim(), icon, sortTime }); } }} disabled={!title.trim()} style={{ padding: "6px 16px", borderRadius: 8, border: "none", background: title.trim() ? "#4338ca" : "#c7d2fe", color: "#fff", fontWeight: 600, fontSize: 13, cursor: title.trim() ? "pointer" : "default" }}>Add</button>
             <button onClick={onCancel} style={{ padding: "6px 16px", borderRadius: 8, border: "1px solid #d1d5db", background: "#fff", color: "#374151", fontSize: 13, cursor: "pointer" }}>Cancel</button>
           </div>
         </div>
@@ -364,21 +512,21 @@
       );
     }
 
-    function StayOverview() {
+    function StayOverview({ onStayClick }) {
       return (
         <div style={{ display: "flex", gap: 6, overflowX: "auto", paddingBottom: 8 }}>
           {STAYS.map(s => {
             const loc = LOCATIONS[s.location] || {};
             const nights = Math.round((new Date(s.end + "T00:00:00") - new Date(s.start + "T00:00:00")) / 86400000);
             return (
-              <div key={s.id} style={{ minWidth: 150, padding: "10px 14px", borderRadius: 12, background: "#fff", border: "2px solid " + (loc.color || "#d1d5db"), flexShrink: 0 }}>
+              <div key={s.id} onClick={() => onStayClick(s)} style={{ minWidth: 150, padding: "10px 14px", borderRadius: 12, background: "#fff", border: "2px solid " + (loc.color || "#d1d5db"), flexShrink: 0, cursor: "pointer", transition: "box-shadow 0.15s" }} onMouseOver={(e) => e.currentTarget.style.boxShadow = "0 2px 8px rgba(0,0,0,0.08)"} onMouseOut={(e) => e.currentTarget.style.boxShadow = "none"}>
                 <div style={{ fontSize: 20, marginBottom: 4 }}>{loc.emoji}</div>
                 <div style={{ fontSize: 14, fontWeight: 700, color: "#111827" }}>{s.location}</div>
                 <div style={{ fontSize: 12, color: "#6b7280" }}>{s.title}</div>
                 <div style={{ fontSize: 12, fontWeight: 600, color: loc.color, marginTop: 4 }}>{nights} night{nights > 1 ? "s" : ""}</div>
                 <div style={{ fontSize: 11, color: "#9ca3af" }}>{formatDate(s.start).split(", ")[1]} {"\u2013"} {formatDate(s.end).split(", ")[1]}</div>
                 {s.mapsQuery && (
-                  <a href={mapsUrl(s.mapsQuery)} target="_blank" rel="noopener noreferrer" className="maps-link" style={{ marginTop: 6 }}>
+                  <a href={mapsUrl(s.mapsQuery)} target="_blank" rel="noopener noreferrer" className="maps-link" style={{ marginTop: 6 }} onClick={(e) => e.stopPropagation()}>
                     {"\uD83D\uDDFA\uFE0F"} Maps
                   </a>
                 )}
@@ -402,6 +550,7 @@
       const [syncing, setSyncing] = useState(true);
       const [loaded, setLoaded] = useState(false);
       const [selectedEvent, setSelectedEvent] = useState(null);
+      const [selectedStay, setSelectedStay] = useState(null);
 
       const today = new Date().toISOString().slice(0, 10);
       const eventsRef = db.ref("events");
@@ -445,7 +594,8 @@
 
       const addEvent = useCallback((ev) => {
         const newRef = eventsRef.push();
-        newRef.set({ ...ev, id: newRef.key });
+        const sortTime = ev.sortTime || "9999";
+        newRef.set({ ...ev, id: newRef.key, sortTime });
       }, []);
 
       const deleteEvent = useCallback((id) => {
@@ -454,6 +604,10 @@
 
       const updateComment = useCallback((id, comment) => {
         eventsRef.child(id).update({ comment });
+      }, []);
+
+      const updateEvent = useCallback((id, updates) => {
+        eventsRef.child(id).update(updates);
       }, []);
 
       const eventsByDate = useMemo(() => {
@@ -496,6 +650,13 @@
               event={selectedEvent}
               onClose={() => setSelectedEvent(null)}
               onUpdateComment={updateComment}
+              onUpdateEvent={updateEvent}
+            />
+          )}
+          {selectedStay && (
+            <StayModal
+              stay={selectedStay}
+              onClose={() => setSelectedStay(null)}
             />
           )}
           <div style={{ textAlign: "center", marginBottom: 24 }}>
@@ -503,7 +664,7 @@
             <p style={{ fontSize: 14, color: "#6b7280", margin: "4px 0 0" }}>Joe, Emily & Chloe &middot; March 31 &ndash; April 21 &middot; 22 days</p>
             <div style={{ marginTop: 8 }}><SyncStatus connected={connected} syncing={syncing} /></div>
           </div>
-          <StayOverview />
+          <StayOverview onStayClick={setSelectedStay} />
           <div style={{ display: "flex", gap: 6, marginTop: 16, marginBottom: 20, overflowX: "auto", paddingBottom: 4 }}>
             {[{ key: "all", label: "All Days" }].concat(Object.keys(LOCATIONS).map(k => ({ key: k, label: LOCATIONS[k].emoji + " " + k }))).map(f => (
               <button key={f.key} onClick={() => setFilter(f.key)} style={{ padding: "5px 14px", borderRadius: 9999, border: filter === f.key ? "2px solid #4338ca" : "1px solid #d1d5db", background: filter === f.key ? "#e0e7ff" : "#fff", color: filter === f.key ? "#4338ca" : "#6b7280", fontSize: 13, fontWeight: 600, cursor: "pointer", whiteSpace: "nowrap", flexShrink: 0 }}>

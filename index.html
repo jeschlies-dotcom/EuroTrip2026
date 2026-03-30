@@ -78,25 +78,35 @@
     };
 
     const SEED_EVENTS = [
-      { id: "f1", date: "2026-03-31", type: "travel", title: "Fly SFO \u2192 London", detail: "Virgin Atlantic VS20 \u00B7 Depart 5:55 PM \u00B7 Arrive Apr 1 12:15 PM \u00B7 Conf: CNQYAM", location: "SFO", icon: "\u2708\uFE0F" },
-      { id: "f2", date: "2026-04-21", type: "travel", title: "Fly CDG \u2192 LHR \u2192 SFO", detail: "BA301 10:35 AM \u2192 BA287 2:30 PM \u00B7 Arrive SFO 5:40 PM", location: "Paris CDG", icon: "\u2708\uFE0F" },
-      { id: "c1", date: "2026-04-01", type: "transport", title: "Pick up UK rental car", detail: "Alamo \u00B7 Ford Focus \u00B7 Heathrow \u00B7 Conf: 1796629618", location: "London", icon: "\uD83D\uDE97" },
-      { id: "x0", date: "2026-04-07", type: "transport", title: "Leave Witney for Heathrow", detail: "Depart by 10:30 AM \u00B7 ~1.5 hrs via M40/M25 \u00B7 Check traffic that morning", location: "Oxfordshire", icon: "\uD83D\uDE97" },
-      { id: "c2", date: "2026-04-07", type: "transport", title: "Return UK rental car", detail: "Heathrow \u00B7 Aim to arrive by 12:00 PM", location: "Oxfordshire", icon: "\uD83D\uDE97" },
-      { id: "c3", date: "2026-04-09", type: "transport", title: "Pick up France rental car", detail: "Alamo \u00B7 Peugeot 3008 \u00B7 Paris Ternes 11:30 AM \u00B7 Conf: 1593836419", location: "Maisons-Laffitte", icon: "\uD83D\uDE97" },
-      { id: "c4", date: "2026-04-20", type: "transport", title: "Return France rental car", detail: "St. Malo Gare by 12:00 PM", location: "Saint-Briac", icon: "\uD83D\uDE97" },
-      { id: "t1", date: "2026-04-07", type: "travel", title: "Eurostar London \u2192 Paris", detail: "Train 9036 \u00B7 St Pancras 3:31 PM \u2192 Gare du Nord 6:59 PM \u00B7 Ref: RG72Z6", location: "Oxfordshire", icon: "\uD83D\uDE84" },
-      { id: "t2", date: "2026-04-20", type: "travel", title: "Train St. Malo \u2192 Paris", detail: "Afternoon train (check PDF for times)", location: "Saint-Briac", icon: "\uD83D\uDE84" },
-      { id: "w1", date: "2026-04-04", type: "event", title: "Pre-wedding drinks", detail: "The Blue Boar, Market Square, Witney \u00B7 6:30\u201311:00 PM", location: "Oxfordshire", icon: "\uD83E\uDD42" },
-      { id: "w2", date: "2026-04-05", type: "event", title: "Wedding: Lucy & James", detail: "Caswell House, Brize Norton \u00B7 Arrive 1:15 PM \u00B7 Ceremony 2:00 PM \u00B7 Formal attire", location: "Oxfordshire", icon: "\uD83D\uDC92" },
-      { id: "d1", date: "2026-04-06", type: "event", title: "Lunch at The Farmer's Dog", detail: "12:45 PM \u00B7 4 guests \u00B7 Burford OX18 4HJ \u00B7 Res: 3RJ8Z3SLR6J", location: "Oxfordshire", icon: "\uD83C\uDF7D\uFE0F" },
-      { id: "h1", date: "2026-04-20", type: "stay", title: "Sheraton Paris CDG", detail: "Terminal 2C \u00B7 Check out Apr 21 8:35 AM", location: "Paris CDG", icon: "\uD83C\uDFE8" },
-      { id: "x1", date: "2026-04-04", type: "transport", title: "Drive London \u2192 Oxfordshire", detail: "Maida Vale to Witney \u00B7 ~1.5 hrs via M40 \u00B7 Check out by 11:00 AM", location: "London", icon: "\uD83D\uDE97" },
-      { id: "x2", date: "2026-04-07", type: "transport", title: "Heathrow \u2192 St Pancras", detail: "~1:00 PM depart Heathrow \u00B7 Heathrow Express + Tube/taxi \u00B7 Arrive by 2:30 PM", location: "London", icon: "\uD83D\uDE87" },
-      { id: "x3", date: "2026-04-07", type: "transport", title: "RER Gare du Nord \u2192 Maisons-Laffitte", detail: "RER B/D to Ch\u00E2telet + RER A \u00B7 ~30 min", location: "Maisons-Laffitte", icon: "\uD83D\uDE87" },
-      { id: "x4", date: "2026-04-09", type: "transport", title: "Drive Paris Ternes \u2192 Loire Valley", detail: "After car pickup 11:30 AM \u00B7 ~2.5 hrs via A10", location: "Loire Valley", icon: "\uD83D\uDE97" },
-      { id: "x5", date: "2026-04-13", type: "transport", title: "Drive Loire Valley \u2192 Saint-Briac", detail: "~3.5 hrs via A11/A84", location: "Saint-Briac", icon: "\uD83D\uDE97" },
-      { id: "x6", date: "2026-04-20", type: "transport", title: "RER to CDG / Sheraton", detail: "Montparnasse \u2192 M\u00E9tro \u2192 Ch\u00E2telet \u2192 RER B to CDG \u00B7 ~1 hr", location: "Paris CDG", icon: "\uD83D\uDE87" },
+      // Mar 31
+      { id: "f1", date: "2026-03-31", type: "travel", title: "Fly SFO \u2192 London", detail: "Virgin Atlantic VS20 \u00B7 Depart 5:55 PM \u00B7 Arrive Apr 1 12:15 PM \u00B7 Conf: CNQYAM", location: "SFO", icon: "\u2708\uFE0F", sortTime: "1755" },
+      // Apr 1
+      { id: "c1", date: "2026-04-01", type: "transport", title: "Pick up UK rental car", detail: "Alamo \u00B7 Ford Focus \u00B7 Heathrow \u00B7 Conf: 1796629618", location: "London", icon: "\uD83D\uDE97", sortTime: "1300" },
+      // Apr 4
+      { id: "x1", date: "2026-04-04", type: "transport", title: "Drive London \u2192 Oxfordshire", detail: "Maida Vale to Witney \u00B7 ~1.5 hrs via M40 \u00B7 Check out by 11:00 AM", location: "London", icon: "\uD83D\uDE97", sortTime: "1100" },
+      { id: "w1", date: "2026-04-04", type: "event", title: "Pre-wedding drinks", detail: "The Blue Boar, Market Square, Witney \u00B7 6:30\u201311:00 PM", location: "Oxfordshire", icon: "\uD83E\uDD42", sortTime: "1830" },
+      // Apr 5
+      { id: "w2", date: "2026-04-05", type: "event", title: "Wedding: Lucy & James", detail: "Caswell House, Brize Norton \u00B7 Arrive 1:15 PM \u00B7 Ceremony 2:00 PM \u00B7 Formal attire", location: "Oxfordshire", icon: "\uD83D\uDC92", sortTime: "1315" },
+      // Apr 6
+      { id: "d1", date: "2026-04-06", type: "event", title: "Lunch at The Farmer's Dog", detail: "12:45 PM \u00B7 4 guests \u00B7 Burford OX18 4HJ \u00B7 Res: 3RJ8Z3SLR6J", location: "Oxfordshire", icon: "\uD83C\uDF7D\uFE0F", sortTime: "1245" },
+      // Apr 7 - the big day
+      { id: "x0", date: "2026-04-07", type: "transport", title: "Leave Witney for Heathrow", detail: "Depart by 10:30 AM \u00B7 ~1.5 hrs via M40/M25 \u00B7 Check traffic that morning", location: "Oxfordshire", icon: "\uD83D\uDE97", sortTime: "1030" },
+      { id: "c2", date: "2026-04-07", type: "transport", title: "Return UK rental car", detail: "Heathrow \u00B7 Aim to arrive by 12:00 PM", location: "Oxfordshire", icon: "\uD83D\uDE97", sortTime: "1200" },
+      { id: "x2", date: "2026-04-07", type: "transport", title: "Heathrow \u2192 St Pancras", detail: "~1:00 PM depart Heathrow \u00B7 Heathrow Express + Tube/taxi \u00B7 Arrive by 2:30 PM", location: "London", icon: "\uD83D\uDE87", sortTime: "1300" },
+      { id: "t1", date: "2026-04-07", type: "travel", title: "Eurostar London \u2192 Paris", detail: "Train 9036 \u00B7 St Pancras 3:31 PM \u2192 Gare du Nord 6:59 PM \u00B7 Ref: RG72Z6", location: "Oxfordshire", icon: "\uD83D\uDE84", sortTime: "1531" },
+      { id: "x3", date: "2026-04-07", type: "transport", title: "RER Gare du Nord \u2192 Maisons-Laffitte", detail: "RER B/D to Ch\u00E2telet + RER A \u00B7 ~30 min", location: "Maisons-Laffitte", icon: "\uD83D\uDE87", sortTime: "1910" },
+      // Apr 9
+      { id: "c3", date: "2026-04-09", type: "transport", title: "Pick up France rental car", detail: "Alamo \u00B7 Peugeot 3008 \u00B7 Paris Ternes 11:30 AM \u00B7 Conf: 1593836419", location: "Maisons-Laffitte", icon: "\uD83D\uDE97", sortTime: "1130" },
+      { id: "x4", date: "2026-04-09", type: "transport", title: "Drive Paris Ternes \u2192 Loire Valley", detail: "After car pickup 11:30 AM \u00B7 ~2.5 hrs via A10", location: "Loire Valley", icon: "\uD83D\uDE97", sortTime: "1200" },
+      // Apr 13
+      { id: "x5", date: "2026-04-13", type: "transport", title: "Drive Loire Valley \u2192 Saint-Briac", detail: "~3.5 hrs via A11/A84", location: "Saint-Briac", icon: "\uD83D\uDE97", sortTime: "1100" },
+      // Apr 20
+      { id: "c4", date: "2026-04-20", type: "transport", title: "Return France rental car", detail: "St. Malo Gare by 12:00 PM", location: "Saint-Briac", icon: "\uD83D\uDE97", sortTime: "1130" },
+      { id: "t2", date: "2026-04-20", type: "travel", title: "Train St. Malo \u2192 Paris", detail: "Afternoon train (check PDF for times)", location: "Saint-Briac", icon: "\uD83D\uDE84", sortTime: "1400" },
+      { id: "x6", date: "2026-04-20", type: "transport", title: "RER to CDG / Sheraton", detail: "Montparnasse \u2192 M\u00E9tro \u2192 Ch\u00E2telet \u2192 RER B to CDG \u00B7 ~1 hr", location: "Paris CDG", icon: "\uD83D\uDE87", sortTime: "1730" },
+      { id: "h1", date: "2026-04-20", type: "stay", title: "Sheraton Paris CDG", detail: "Terminal 2C \u00B7 Check out Apr 21 8:35 AM", location: "Paris CDG", icon: "\uD83C\uDFE8", sortTime: "1900" },
+      // Apr 21
+      { id: "f2", date: "2026-04-21", type: "travel", title: "Fly CDG \u2192 LHR \u2192 SFO", detail: "BA301 10:35 AM \u2192 BA287 2:30 PM \u00B7 Arrive SFO 5:40 PM", location: "Paris CDG", icon: "\u2708\uFE0F", sortTime: "1035" },
     ];
 
     const STAYS = [
@@ -412,10 +422,13 @@
                 eventsRef.child(ev.id).set(ev);
               }
             });
-            // Also update seed events if their details changed
+            // Sync seed event updates (detail changes, sortTime, etc.)
             SEED_EVENTS.forEach(ev => {
-              if (existingIds.has(ev.id) && data[ev.id].detail !== ev.detail) {
-                eventsRef.child(ev.id).update({ detail: ev.detail, title: ev.title });
+              if (existingIds.has(ev.id)) {
+                const existing = data[ev.id];
+                if (existing.detail !== ev.detail || existing.sortTime !== ev.sortTime) {
+                  eventsRef.child(ev.id).update({ detail: ev.detail, title: ev.title, sortTime: ev.sortTime });
+                }
               }
             });
           } else {
@@ -448,6 +461,14 @@
         events.forEach(ev => {
           if (!map[ev.date]) map[ev.date] = [];
           map[ev.date].push(ev);
+        });
+        // Sort each day's events by sortTime (seed events), then custom events at end
+        Object.values(map).forEach(arr => {
+          arr.sort((a, b) => {
+            const ta = a.sortTime || "9999";
+            const tb = b.sortTime || "9999";
+            return ta.localeCompare(tb);
+          });
         });
         return map;
       }, [events]);
